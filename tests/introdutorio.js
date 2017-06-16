@@ -16,8 +16,8 @@ test('Marcando uma por uma até 7 marcações lobinho', t => {
   //perder precisão na 4 case decimal. 0,0001
   const total = createMarcacoes('MARKED', 7)
     .reduce((acc, m, i) => 
-      dsl.introdutorio.lobinho(i + 1, acc, [m])
-      , 0
+      dsl.introdutorio.lobinho(i + 1, acc, [m]),
+      0
     )
   t.is(total, 100)
 })

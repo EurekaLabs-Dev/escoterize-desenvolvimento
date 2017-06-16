@@ -1,10 +1,7 @@
 import R from 'ramda'
 import { MarkStatus } from './enums'
-import config from './cofig'
 
-const {introdutorio: introdutorioValues} = config
 const {MARKED, UNMARKED} = MarkStatus;
-
 const limites = x => x > 100 ? 100 : x < 0 ? 0 : x
 const roundTo4 = x => Math.floor(x * 10000) / 10000
 
