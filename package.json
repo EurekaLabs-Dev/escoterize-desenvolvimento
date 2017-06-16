@@ -1,0 +1,29 @@
+{
+  "name": "escoterize-desenvolvimento",
+  "version": "1.0.0",
+  "description": "Módulo que realizar calculos de desenvolvimento de acordo com marcações das atividades",
+  "main": "index.js",
+  "scripts": {
+    "test": "ava",
+    "test:watch": "ava --watch"
+  },
+  "keywords": [
+    "escoterize"
+  ],
+  "author": "ktabriga",
+  "license": "ISC",
+  "dependencies": {
+    "ava": "0.19.1",
+    "babel-preset-es2015": "6.24.1",
+    "ramda": "0.24.1"
+  },
+  "ava": {
+    "files": [
+      "tests/**/*.js"
+    ],
+    "require": [
+      "babel-register"
+    ],
+    "babel": "inherit"
+  }
+}
