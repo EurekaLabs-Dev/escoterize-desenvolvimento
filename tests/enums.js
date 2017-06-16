@@ -1,11 +1,11 @@
 import test from 'ava'
-import enums from '../src/enums'
+import {Segmentos} from '../src/enums'
 
 test(t => {
-  t.is(enums.INTRODUTORIO, 'INTRODUTORIO')
-  t.is(enums.PROGRESSAO, 'PROGRESSAO')
-  t.is(enums.INSIGNIA_ESPECIAL, 'INSIGNIA_ESPECIAL')
-  t.is(enums.CORDAO, 'CORDAO')
-  t.is(enums.INSIGNIA_MODALIDADE, 'INSIGNIA_MODALIDADE')
-  t.is(enums.GRAU_MAXIMO, 'GRAU_MAXIMO')
+  t.is(Segmentos.INTRODUTORIO, 'INTRODUTORIO')
+  t.is(Segmentos.PROGRESSAO, 'PROGRESSAO')
+  t.is(Segmentos.INSIGNIA_ESPECIAL, 'INSIGNIA_ESPECIAL')
+  t.is(Segmentos.CORDAO, 'CORDAO')
+  t.is(Segmentos.INSIGNIA_MODALIDADE, 'INSIGNIA_MODALIDADE')
+  t.is(Segmentos.GRAU_MAXIMO, 'GRAU_MAXIMO')
 })

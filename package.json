@@ -19,7 +19,8 @@
   },
   "ava": {
     "files": [
-      "tests/**/*.js"
+      "tests/**/*.js",
+      "!tests/helpers.js"
     ],
     "require": [
       "babel-register"

@@ -1,8 +1,14 @@
-export default {
+export const Segmentos = {
   INTRODUTORIO: 'INTRODUTORIO',
   PROGRESSAO: 'PROGRESSAO',
   INSIGNIA_ESPECIAL: 'INSIGNIA_ESPECIAL',
   CORDAO: 'CORDAO',
   INSIGNIA_MODALIDADE: 'INSIGNIA_MODALIDADE',
   GRAU_MAXIMO: 'GRAU_MAXIMO'
+}
+
+export const MarkStatus = {
+  MARKED: 'MARKED',
+  UNMARKED: 'UNMARKED',
+  isMarked: m => m.type === 'MARKED'
 }
