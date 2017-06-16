@@ -1,6 +1,6 @@
 import R from 'ramda'
 import { MarkStatus } from './enums'
-import config from './cofig' 
+import config from './cofig'
 
 const {introdutorio: introdutorioValues} = config
 const {MARKED, UNMARKED} = MarkStatus;
@@ -8,12 +8,12 @@ const {MARKED, UNMARKED} = MarkStatus;
 const limites = x => x > 100 ? 100 : x < 0 ? 0 : x
 const roundTo4 = x => Math.floor(x * 10000) / 10000
 
-export const quantidadeMarcadas = (sum, marcacao) => 
+export const quantidadeMarcadas = (sum, marcacao) =>
   MarkStatus.isMarked(marcacao) ? sum + 1: sum - 1
 
 export function percentualMarcacoes(totalAtual, marcacoes, totalMarcacoes) {
   return R.compose(
-    limites, 
+    limites,
     x => totalAtual + x,
     roundTo4,
     qtd => (qtd / totalMarcacoes) * 100,
@@ -21,12 +21,3 @@ export function percentualMarcacoes(totalAtual, marcacoes, totalMarcacoes) {
   )(marcacoes)
 }
 
-export const introdutorioLobinho = (qtdMarcadas, totalAtual, marcacoes) => 
-  qtdMarcadas === introdutorioValues.lobinho ? 
-    100 :
-    percentualMarcacoes(totalAtual, marcacoes, introdutorioValues.lobinho)
-
-export const introdutorio = (qtdMarcadas, totalAtual, marcacoes) =>
-  qtdMarcadas === introdutorioValues.comum ?
-    100 :
-    percentualMarcacoes(totalAtual, marcacoes, introdutorioValues.comum)
