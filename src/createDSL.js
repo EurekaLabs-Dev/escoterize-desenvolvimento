@@ -1,25 +1,26 @@
 import R from 'ramda'
-import {percentualMarcacoes} from './desenvolvimento'
+import {percentual, quantidadeMarcadas} from './desenvolvimento'
 
 const calcularPercentual = qtdAtividades =>
-  (qtdMarcadas, totalAtual, marcacoes) => 
-        qtdMarcadas === qtdAtividades ?
-        100 :
-        percentualMarcacoes(totalAtual, marcacoes, qtdAtividades)
+  (qtdMarcacoes, marcacoes) =>
+    qtdMarcacoes === qtdAtividades ?
+      100 :
+      percentual(quantidadeMarcadas(qtdMarcacoes, marcacoes), qtdAtividades)
 
-function createIntrodutorio({introdutorio}) {
-  return Object.keys(introdutorio)
-    .reduce((dsl, key) => 
+
+function simplePercentual(segmento) {
+  return Object.keys(segmento)
+    .reduce((dsl, key) =>
       R.merge(dsl, {
-        [key]: calcularPercentual(introdutorio[key])
-      })
-    , {})
+        [key]: calcularPercentual(segmento[key])
+      }) , {})
 
 }
 
 export default function createDSL(config) {
-
-    return {
-      introdutorio: createIntrodutorio(config)
-    }
+  return Object.keys(config)
+    .reduce(
+      (dsl, key) => R.merge(dsl, {[key]: simplePercentual(config[key])}),
+      {}
+    )
 }
