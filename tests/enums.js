@@ -1,7 +1,7 @@
 import test from 'ava'
 import {Segmentos} from '../src/enums'
 
-test(t => {
+test('Verifica enums', t => {
   t.is(Segmentos.INTRODUTORIO, 'INTRODUTORIO')
   t.is(Segmentos.PROGRESSAO, 'PROGRESSAO')
   t.is(Segmentos.INSIGNIA_ESPECIAL, 'INSIGNIA_ESPECIAL')
