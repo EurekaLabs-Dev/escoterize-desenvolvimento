@@ -79,6 +79,6 @@ export default function desenvolvimento(state, marcacoes) {
       ),
     progressao: reduceByMetadata(state.progressao, marcacoesSegmento.progressao),
     insigniaEspecial: reduceByMetadata(state.insigniaEspecial, marcacoesSegmento.insignia_especial),
-    especialidade: reduceEspecialidade(state.especialidade, marcacoesSegmento.especialidade)
+    especialidade: reduceByMetadata(state.especialidade, marcacoesSegmento.especialidade)
   }
 }
