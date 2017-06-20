@@ -1,5 +1,5 @@
 import test from 'ava'
-import create, {verificacao} from '../src/conquista'
+import create, {verificacao, nivelEspecialidade} from '../src/conquista'
 
 const senior = {
   introdutorio: {
@@ -27,4 +27,19 @@ test('Fazer verificação de perca', t => {
     type: 'LOST',
     payload: {ramo: 'SENIOR'}
   })
+})
+
+test('Faz verificação que não tem mudança', t => {
+  const result = verificacao(10, {})(7,8)
+  t.deepEqual(result, {
+    type: 'NONE'
+  })
+})
+
+test('Calcula nivel da especialidade', t=> {
+  t.is(nivelEspecialidade(3, 9), 1)
+  t.is(nivelEspecialidade(4, 9), 1)
+  t.is(nivelEspecialidade(6, 9), 2)
+  t.is(nivelEspecialidade(8, 9), 2)
+  t.is(nivelEspecialidade(9, 9), 3)
 })

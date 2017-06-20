@@ -1,14 +1,23 @@
 import R from 'ramda'
 
 export const verificacao = (target, payload) => (oldValue, newValue) => {
-  if (newValue === target && oldValue < target) {
+  if (oldValue < target && newValue === target) {
     return {
-      type: 'REACHED', 
+      type: 'REACHED',
       payload
     }
   }
 
-  if (oldValue === target && )
+  if(oldValue === target && newValue < target) {
+    return {
+      type: 'LOST',
+      payload
+    }
+  }
+
+  return {
+    type: 'NONE'
+  }
 }
 
 export default function create(options) {
@@ -18,3 +27,6 @@ export default function create(options) {
         [key]: verificacao(options[key].payload)
       }), {})
 }
+
+export const nivelEspecialidade = (count, total) =>
+  Math.trunc(count / total / (1/3))
