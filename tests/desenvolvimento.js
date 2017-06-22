@@ -1,7 +1,7 @@
 import test from 'ava'
 import R from 'ramda'
 import {createMarcacoes} from './helpers'
-import desenvolvimento, {reduceEspecialidade, reduceByMetadata} from '../src/desenvolvimento'
+import desenvolvimento, {countBy, byMetadata, byEspecialidadeId, byRamoConhecimento} from '../src/desenvolvimento'
 
 test('Gera state', t => {
   const result = desenvolvimento({introdutorio: 0}, [])
@@ -9,7 +9,8 @@ test('Gera state', t => {
     introdutorio: 0,
     progressao: {},
     insigniaEspecial: {},
-    especialidade: {}
+    especialidade: {},
+    ramoConhecimento: {}
   })
 })
 
@@ -17,32 +18,27 @@ test('Faz 10 marcações para periodo introdutorio', t => {
   const marcacoes = createMarcacoes('MARKED', 10)
     .map(R.merge(R.__, {segmento: 'INTRODUTORIO'}))
   const result = desenvolvimento({introdutorio: 0}, marcacoes)
-  return t.deepEqual(result, {
-    introdutorio: 10,
-    progressao: {},
-    insigniaEspecial: {},
-    especialidade: {}
-  })
+  return t.is(result.introdutorio, 10)
 })
 
-test('Faz reduce de marcações por metadata', t => {
+test('Faz contagem de marcações por metadata', t => {
   const marcacoes = [
-    ...createMarcacoes('MARKED', 2).map(R.merge(R.__, {metadata: 'pista'})),
-    ...createMarcacoes('MARKED', 5).map(R.merge(R.__, {metadata: 'trilha'}))
+    ...createMarcacoes('MARKED', 2).map(R.merge(R.__, {metadata: 'pistaTrilha'})),
+    ...createMarcacoes('MARKED', 5).map(R.merge(R.__, {metadata: 'rumoTravessia'}))
   ].map(R.merge(R.__, {segmento: 'PROGRESSAO'}))
 
   const initialState = {
-    pista: 0,
-    trilha: 0
+    pistaTrilha: 0,
+    rumoTravessia: 0
   }
-  const result = reduceByMetadata(initialState, marcacoes)
+  const result = countBy(byMetadata, initialState, marcacoes)
   t.deepEqual(result, {
-    pista: 2,
-    trilha: 5
+    pistaTrilha: 2,
+    rumoTravessia: 5
   })
 })
 
-test('Faz reduce de marcações de especialidades', t => {
+test('Conta especialidades', t => {
   const marcacoes = createMarcacoes('MARKED', 2)
     .map(R.merge(R.__, {
       metadata: {
@@ -51,18 +47,14 @@ test('Faz reduce de marcações de especialidades', t => {
       }
     }))
 
-  const result = reduceEspecialidade({}, marcacoes)
+  const result = countBy(byEspecialidadeId, {}, marcacoes)
   t.deepEqual(result, {
-    11: {
-      id: 11,
-      count: 2,
-      ramoConhecimento: 'SERVICO'
-    }
+    11: 2
   })
 })
 
 
-test('Faz reduce de marcações de 2 especialidades', t => {
+test('Conta especialidades por ramo de conhecimento', t => {
   const marcacoesServico = createMarcacoes('MARKED', 2)
     .map(R.merge(R.__, {
       metadata: {
@@ -78,17 +70,9 @@ test('Faz reduce de marcações de 2 especialidades', t => {
       }
     }))
 
-  const result = reduceEspecialidade({}, [...marcacoesCultura, ...marcacoesServico])
+  const result = countBy(byRamoConhecimento, {}, [...marcacoesCultura, ...marcacoesServico])
   t.deepEqual(result, {
-    11: {
-      id: 11,
-      count: 2,
-      ramoConhecimento: 'SERVICO'
-    },
-    33: {
-      id:33,
-      count: 4,
-      ramoConhecimento: 'CULTURA'
-    }
+    SERVICO: 2,
+    CULTURA: 4
   })
 })

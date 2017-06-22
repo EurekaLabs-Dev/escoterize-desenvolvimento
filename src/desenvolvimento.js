@@ -37,37 +37,17 @@ export function divisoes(quantidadeMarcacoes, quantidadeAtividades, divisoes) {
 const calcularDivisao = (percentual, divisao, divisoes) =>
   limites(percentual * divisoes - ((divisao - 1) * 100))
 
-const getQuantidadeAtualMetadata = (marcacoes) =>
-  R.path([marcacoes[0].metadata])
-
-const calcularQuantidadeMetadata = (state, marcacoes) =>
-  quantidadeMarcadas(getQuantidadeAtualMetadata(marcacoes)(state), marcacoes)
-
-export const reduceByMetadata  = (state, list) =>
+export const countBy  = (byValue, state, list) =>
   list ?
     R.compose(
-      R.map(marcacoes => calcularQuantidadeMetadata(state, marcacoes)),
-      R.groupBy(m => m.metadata)
+      R.map(marcacoes => quantidadeMarcadas(state[byValue(marcacoes[0])] || 0, marcacoes)),
+      R.groupBy(byValue)
     )(list)
     : {}
 
-const calculateEspecialidadeMarcacao = state => marcacoes => {
-  const {especialidadeId, ramoConhecimento} = marcacoes[0].metadata
-  const currentCount = R.pathOr(0, [especialidadeId, 'count'], state)
-  return {
-    id: especialidadeId,
-    count: quantidadeMarcadas(currentCount, marcacoes),
-    ramoConhecimento
-  }
-}
-
-export const reduceEspecialidade = (state, marcacoes) =>
-  marcacoes ?
-    R.compose(
-      R.map(calculateEspecialidadeMarcacao(state)),
-      R.groupBy(m => m.metadata.especialidadeId)
-    )(marcacoes)
-    :{}
+export const byMetadata = m => m.metadata
+export const byEspecialidadeId = m => m.metadata.especialidadeId
+export const byRamoConhecimento = m => m.metadata.ramoConhecimento
 
 export default function desenvolvimento(state, marcacoes) {
   const marcacoesSegmento = R.groupBy(m => m.segmento.toLocaleLowerCase(), marcacoes)
@@ -77,8 +57,9 @@ export default function desenvolvimento(state, marcacoes) {
         state.introdutorio,
         marcacoesSegmento.introdutorio || []
       ),
-    progressao: reduceByMetadata(state.progressao, marcacoesSegmento.progressao),
-    insigniaEspecial: reduceByMetadata(state.insigniaEspecial, marcacoesSegmento.insignia_especial),
-    especialidade: reduceByMetadata(state.especialidade, marcacoesSegmento.especialidade)
+    progressao: countBy(byMetadata, state.progressao, marcacoesSegmento.progressao),
+    insigniaEspecial: countBy(byMetadata, state.insigniaEspecial, marcacoesSegmento.insignia_especial),
+    especialidade: countBy(byEspecialidadeId, state.especialidade, marcacoesSegmento.especialidade),
+    ramoConhecimento: countBy(byRamoConhecimento, state.ramoConhecimento, marcacoesSegmento.especialidades)
   }
 }
