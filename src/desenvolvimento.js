@@ -1,10 +1,8 @@
 import R from 'ramda'
 import { MarkStatus, Segmentos } from './enums'
+import {roundTo4, limiteZero, limites} from './utils'
 
 const {MARKED, UNMARKED} = MarkStatus;
-const limites = x => x > 100 ? 100 : limiteZero(x)
-const roundTo4 = x => Math.floor(x * 10000) / 10000
-const limiteZero = x => x < 0 ? 0 : x
 
 const reduceQuantidade = (qtd, marcacao) =>
   MarkStatus.isMarked(marcacao) ? qtd + 1: qtd - 1

@@ -36,9 +36,6 @@ export default function create(options) {
   }
 }
 
-export const nivelEspecialidade = (count, total) =>
-  Math.trunc(count / total / (1/3))
-
 
 export const verificacaoEspecialidade = (oldValue, newValue) =>
   [
