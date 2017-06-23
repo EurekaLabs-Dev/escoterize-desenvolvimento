@@ -16,13 +16,6 @@ export const requisitoSatisfeitoEspecialidade = ({percentuais, requisitos}) => i
     nivelEspecialidadeFromPC
   )(percentuais[id])
 
-export const sumDoneEspecialidades = data =>
-  R.compose(
-    pcs => R.reduce(R.add, 0, pcs) / pcs.length,
-    R.map(requisitoSatisfeitoEspecialidade(data)),
-    R.keys
-  )(data.requisitos)
-
 export const requisitosSatisfeitosRamoConhecimento = ({requisitos, niveis}) => ramo =>
   R.compose(
     limites1,
@@ -32,7 +25,25 @@ export const requisitosSatisfeitosRamoConhecimento = ({requisitos, niveis}) => r
     R.keys
   )(requisitos[ramo])
 
-export const calcularPercentual = data => data
+export const sumRequisitosSatisfeitos = (data, requisitosSatisfeitos) =>
+  R.compose(
+    percentuais => R.reduce(R.add, 0, percentuais) / percentuais.length,
+    R.map(requisitosSatisfeitos(data)),
+    R.keys
+  )(data.requisitos)
+
+export const calcularPercentual = data => {
+  const pcRequeridas = sumRequisitosSatisfeitos({
+    requisitos: data.requisito.especialidades,
+    percentuais: data.percentuais
+  }, requisitoSatisfeitoEspecialidade)
+  const pcRamos = sumRequisitosSatisfeitos({
+    requisitos: data.requisito.ramosConhecimento,
+    niveis: data.ramosConhecimento
+  }, requisitosSatisfeitosRamoConhecimento)
+
+  return (pcRequeridas + pcRamos) / 2
+}
 
 export const definirConquista =
   ({pcEspecialidades, pcRamosConhecimento, requisitos}) =>

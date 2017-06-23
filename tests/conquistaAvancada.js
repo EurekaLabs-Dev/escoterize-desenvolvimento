@@ -1,9 +1,9 @@
 import test from 'ava'
 import R from 'ramda'
-import {requisitoSatisfeitoEspecialidade, calculaRamosConhecimentoPC, calcularPercentual, sumPropsValues, conquistaByEspecialidade, sumDoneEspecialidades, calcularProgressaoRamosConhecimento, requisitosSatisfeitosRamoConhecimento} from '../src/conquistaAvancada'
+import {sumRequisitosSatisfeitos, requisitoSatisfeitoEspecialidade, calculaRamosConhecimentoPC, calcularPercentual, sumPropsValues, conquistaByEspecialidade, sumDoneEspecialidades, calcularProgressaoRamosConhecimento, requisitosSatisfeitosRamoConhecimento} from '../src/conquistaAvancada'
 
 
-test.only('Calcula percentual do requisito satisfeito em 100%', t => {
+test('Calcula percentual do requisito satisfeito em 100%', t => {
   const result = requisitoSatisfeitoEspecialidade  ({
     percentuais: {
       10: 4/6
@@ -16,7 +16,7 @@ test.only('Calcula percentual do requisito satisfeito em 100%', t => {
   t.is(result, 1)
 })
 
-test.only('Percentual não pode passar de 100%', t => {
+test('Percentual não pode passar de 100%', t => {
   const result = requisitoSatisfeitoEspecialidade({
     percentuais: {
       10: 4/6
@@ -29,7 +29,7 @@ test.only('Percentual não pode passar de 100%', t => {
   t.is(result, 1)
 })
 
-test.only('Calcula percentual do requisito satisfeito em 50%', t => {
+test('Calcula percentual do requisito satisfeito em 50%', t => {
   const result = requisitoSatisfeitoEspecialidade({
     percentuais: {
       10: 3/6
@@ -42,21 +42,8 @@ test.only('Calcula percentual do requisito satisfeito em 50%', t => {
   t.is(result, 0.5)
 })
 
-test.only('Calcula percentual de especialidades que atigiram seus niveis', t => {
-  const percentuais = {
-    10: 6/12,
-    11: 6/9,
-    14: 1/9
-  }
-  const requisitos = {
-    10: 2,
-    11: 2
-  }
-  const result = sumDoneEspecialidades({percentuais, requisitos})
-  t.is(result, 0.75)
-})
 
-test.only('Calcula perncentual de 100% atingido nos ramos de conhecimento', t => {
+test('Calcula perncentual de 100% atingido nos ramos de conhecimento', t => {
   const niveis = {
     servico: {
       1: 0,
@@ -78,14 +65,13 @@ test.only('Calcula perncentual de 100% atingido nos ramos de conhecimento', t =>
   t.is(result, 1)
 })
 
-test.only('Calcula perncentual de 50% atingido nos ramos de conhecimento', t => {
+test('Calcula perncentual de 50% atingido nos ramos de conhecimento', t => {
   const niveis = {
     servico: {
       1: 0,
       2: 2,
       3: 4
-    }
-  }
+    } }
   const requisitos = {
     servico: {
       2: 4,
@@ -100,41 +86,117 @@ test.only('Calcula perncentual de 50% atingido nos ramos de conhecimento', t => 
   t.is(result, 0.5)
 })
 
-test('Cria evento de ganho de conquista', t => {
-  const oldPercentuais = {
-    10: 2/9,
-    25: 6/9
-  }
-  const newPercentuais = {
-    10: 3/9,
-    25: 6/9
-  }
-  const newRamosConhecimento = {
-    SERVICO: 2
-  }
-  const oldRamosConhecimento = {
-    SERVICO: 2
+
+test('Soma percentuais dos requisitos para os ramos de conhecimento', t=> {
+  const niveis = {
+    servico: {
+      1: 0,
+      2: 2,
+      3: 4
+    },
+    cultura: {
+      1: 0,
+      2: 3,
+      3: 0
+    }
   }
   const requisitos = {
-    especialidade: {
-      10: 1,
-      25: 2
+    servico: {
+      2: 2,
+      3: 4
+    },
+    cultura:  {
+      2: 6
+    }
+  }
+
+  const result = sumRequisitosSatisfeitos({
+    niveis,
+    requisitos
+  }, requisitosSatisfeitosRamoConhecimento)
+  t.is(result, 0.75)
+})
+
+test('Soma percentuais de especialidades que atigiram seus niveis', t => {
+  const percentuais = {
+    10: 6/12,
+    11: 6/9,
+    14: 1/9
+  }
+  const requisitos = {
+    10: 2,
+    11: 2
+  }
+  const result = sumRequisitosSatisfeitos(
+    {percentuais, requisitos},
+    requisitoSatisfeitoEspecialidade
+  )
+  t.is(result, 0.75)
+})
+
+
+test('Calcula percentual com base no requisito', t=> {
+  const requisitoCordaoDourado = {
+    quantidadeMinima: 15,
+    especialidades: {
+      10: 3//primeiro socorros
     },
     ramosConhecimento: {
-      SERVICO: 2
-    },
-    payload: {}
+      servico: {
+        3: 3
+      }
+    }
+
   }
-  const result = conquistaByEspecialidade({
-    oldPercentuais,
-    newPercentuais,
-    oldRamosConhecimento,
-    newRamosConhecimento,
-    requisitos
+  const percentuaisEspecialidades = {
+    10: 1
+  }
+  const ramosConhecimento = {
+    servico: { 3: 4 },
+    cultura: { 3: 4 },
+    habilidadesEscoteiras: { 3: 4 },
+    servico: { 3: 4 }
+  }
+
+  const result = calcularPercentual({
+    requisito: requisitoCordaoDourado,
+    percentuais: percentuaisEspecialidades,
+    ramosConhecimento
   })
 
-  t.deepEqual(result, {
-    type: 'REACHED',
-    payload: {}
+  t.is(result, 1)
+})
+
+test('Calcula percentual para quando não distribuir em todos os ramos', t=> {
+  const requisitoCordaoDourado = {
+    quantidadeMinima: 15,
+    nivelMinimo: 3,
+    especialidades: {
+      10: 3
+    },
+    ramosConhecimento: {
+      servico: {
+        3: 3
+      }
+    }
+
+  }
+  const percentuaisEspecialidades = {
+    10: 1
+  }
+  const ramosConhecimento = {
+    servico: { 3: 4 },
+    cultura: { 3: 4 },
+    habilidadesEscoteiras: { 3: 0},
+    servico: { 3: 0 },
+    cienciaTecnologia: {3: 0}
+  }
+
+  const result = calcularPercentual({
+    requisito: requisitoCordaoDourado,
+    percentuais: percentuaisEspecialidades,
+    ramosConhecimento
   })
+
+  t.is(result, 0.58)
 })
