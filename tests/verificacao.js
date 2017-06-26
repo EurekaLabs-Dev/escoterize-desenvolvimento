@@ -1,5 +1,5 @@
 import test from 'ava'
-import create, {verificacao, verificacaoEspecialidade} from '../src/conquistaBasica'
+import create, {verificacao, verificacaoEspecialidade} from '../src/verificacao'
 import {nivelEspecialidade} from '../src/especialidade'
 
 const senior = {
