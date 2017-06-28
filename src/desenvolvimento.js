@@ -29,7 +29,6 @@ export function divisoes(quantidadeMarcacoes, quantidadeAtividades, divisoes) {
       R.merge(acc, {[divisao]: calcularDivisao(pc, divisao, divisoes)}),
       {}
     )
-
 }
 
 const calcularDivisao = (percentual, divisao, divisoes) =>
