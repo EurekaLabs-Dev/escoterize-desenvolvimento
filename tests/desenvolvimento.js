@@ -3,49 +3,9 @@ import R from 'ramda'
 import {createMarcacoes} from './helpers'
 import desenvolvimento, {countBy, byMetadata, byEspecialidadeId, byRamoConhecimento} from '../src/desenvolvimento'
 
-test('Gera state', t => {
-  const result = desenvolvimento({introdutorio: 0}, [])
-  t.deepEqual(result, {
-    introdutorio: 0,
-    progressao: {},
-    insigniaEspecial: {},
-    especialidade: {},
-    ramoConhecimento: {}
-  })
-})
-
-test('Faz 10 marcações para periodo introdutorio', t => {
-  const marcacoes = createMarcacoes('MARKED', 10)
-    .map(R.merge(R.__, {segmento: 'INTRODUTORIO'}))
-  const result = desenvolvimento({introdutorio: 0}, marcacoes)
-  return t.is(result.introdutorio, 10)
-})
-
-test('Faz contagem de marcações por metadata', t => {
-  const marcacoes = [
-    ...createMarcacoes('MARKED', 2).map(R.merge(R.__, {metadata: 'pistaTrilha'})),
-    ...createMarcacoes('MARKED', 5).map(R.merge(R.__, {metadata: 'rumoTravessia'}))
-  ].map(R.merge(R.__, {segmento: 'PROGRESSAO'}))
-
-  const initialState = {
-    pistaTrilha: 0,
-    rumoTravessia: 0
-  }
-  const result = countBy(byMetadata, initialState, marcacoes)
-  t.deepEqual(result, {
-    pistaTrilha: 2,
-    rumoTravessia: 5
-  })
-})
-
 test('Conta especialidades', t => {
   const marcacoes = createMarcacoes('MARKED', 2)
-    .map(R.merge(R.__, {
-      metadata: {
-        especialidadeId: 11,
-        ramoConhecimento: 'SERVICO'
-      }
-    }))
+    .map(R.merge(R.__, { especialidadeId: 11 }))
 
   const result = countBy(byEspecialidadeId, {}, marcacoes)
   t.deepEqual(result, {
@@ -54,25 +14,49 @@ test('Conta especialidades', t => {
 })
 
 
-test('Conta especialidades por ramo de conhecimento', t => {
-  const marcacoesServico = createMarcacoes('MARKED', 2)
+test('Conta especialidades com estado inicial', t => {
+  const marcacoes = createMarcacoes('MARKED', 2)
+    .map(R.merge(R.__, { especialidadeId: 11 }))
+
+  const result = countBy(byEspecialidadeId, {22: 4}, marcacoes)
+  t.deepEqual(result, {
+    11: 2,
+    22: 4
+  })
+})
+
+
+test('Calcula desenvolvimento com base nos enums', t => {
+  const initialState = {
+    PROMESSA_ESCOTEIRA_LOBINHO: 0,
+    PROMESSA_ESCOTEIRA_SENIOR: 0,
+    PROGRESSAO_SENIOR: 0
+  }
+
+  const marcacoes = R.flatten([
+    createMarcacoes('MARKED', 4).map(R.merge(R.__, {segmento: 'PROMESSA_ESCOTEIRA_SENIOR'})),
+    createMarcacoes('MARKED', 8).map(R.merge(R.__, {segmento: 'PROMESSA_ESCOTEIRA_LOBINHO'})),
+    createMarcacoes('MARKED', 7).map(R.merge(R.__, {segmento: 'PROGRESSAO_SENIOR'}))
+  ])
+  const result = desenvolvimento(initialState, marcacoes)
+  t.deepEqual(result, {
+    PROMESSA_ESCOTEIRA_LOBINHO: 8,
+    PROMESSA_ESCOTEIRA_SENIOR: 4,
+    PROGRESSAO_SENIOR: 7
+  })
+})
+
+test('Calcula desenvolvimento das especialidades', t => {
+  const marcacoes = createMarcacoes('MARKED', 10)
     .map(R.merge(R.__, {
-      metadata: {
-        especialidadeId: 11,
-        ramoConhecimento: 'SERVICO'
-      }
-    }))
-  const marcacoesCultura = createMarcacoes('MARKED', 4)
-    .map(R.merge(R.__, {
-      metadata: {
-        especialidadeId: 33,
-        ramoConhecimento: 'CULTURA'
-      }
+      especialidadeId: 11,
+      segmento: 'SERVICOS'
     }))
 
-  const result = countBy(byRamoConhecimento, {}, [...marcacoesCultura, ...marcacoesServico])
+  const result = desenvolvimento({}, marcacoes)
   t.deepEqual(result, {
-    SERVICO: 2,
-    CULTURA: 4
+    especialidade: {
+      11: 10
+    }
   })
 })

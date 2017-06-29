@@ -1,6 +1,7 @@
 import R from 'ramda'
 import { MarkStatus, Segmentos } from './enums'
 import {roundTo4, limiteZero, limites} from './utils'
+import desenvolvimentoEnums from '../enums/desenvolvimento'
 
 const {MARKED, UNMARKED} = MarkStatus;
 
@@ -37,26 +38,38 @@ const calcularDivisao = (percentual, divisao, divisoes) =>
 export const countBy  = (byValue, state, list) =>
   list ?
     R.compose(
+      R.merge(state),
       R.map(marcacoes => quantidadeMarcadas(state[byValue(marcacoes[0])] || 0, marcacoes)),
       R.groupBy(byValue)
     )(list)
-    : {}
+    : state
 
 export const byMetadata = m => m.metadata
-export const byEspecialidadeId = m => m.metadata.especialidadeId
+export const byEspecialidadeId = m => m.especialidadeId
 export const byRamoConhecimento = m => m.metadata.ramoConhecimento
 
-export default function desenvolvimento(state, marcacoes) {
-  const marcacoesSegmento = R.groupBy(m => m.segmento.toLocaleLowerCase(), marcacoes)
-  return {
-    introdutorio:
-      quantidadeMarcadas(
-        state.introdutorio,
-        marcacoesSegmento.introdutorio || []
-      ),
-    progressao: countBy(byMetadata, state.progressao, marcacoesSegmento.progressao),
-    insigniaEspecial: countBy(byMetadata, state.insigniaEspecial, marcacoesSegmento.insignia_especial),
-    especialidade: countBy(byEspecialidadeId, state.especialidade, marcacoesSegmento.especialidade),
-    ramoConhecimento: countBy(byRamoConhecimento, state.ramoConhecimento, marcacoesSegmento.especialidades)
+const isEspecialidade = segmento => [
+    desenvolvimentoEnums.HABILIDADES_ESCOTEIRAS,
+    desenvolvimentoEnums.SERVICOS,
+    desenvolvimentoEnums.DESPORTOS,
+    desenvolvimentoEnums.CULTURA,
+    desenvolvimentoEnums.CIENCIA_TECNOLOGIA
+  ].includes(segmento)
+
+const countBySegmento = marcacoesSegmento => (state, segmento) => {
+  if (isEspecialidade(segmento)) {
+    const especialidadeState = countBy(byEspecialidadeId, state.especialidade || {}, marcacoesSegmento[segmento])
+    return R.set(R.lensProp('especialidade'), especialidadeState, state)
   }
+  const segmentoLens = R.lensProp(segmento)
+  const getBySegmento = R.view(segmentoLens)
+  return R.set(segmentoLens, quantidadeMarcadas(getBySegmento(state), getBySegmento(marcacoesSegmento)), state)
+}
+
+export default function desenvolvimento(state, marcacoes) {
+  const marcacoesSegmento = R.groupBy(m => m.segmento, marcacoes)
+
+  return R.keys(desenvolvimentoEnums)
+    .filter(segmento => !!marcacoesSegmento[segmento])
+    .reduce(countBySegmento(marcacoesSegmento), state)
 }
