@@ -1,7 +1,7 @@
 import R from 'ramda'
-import { MarkStatus, Segmentos } from './enums'
+import { MarkStatus } from './enums/mark'
 import {roundTo4, limiteZero, limites} from './utils'
-import desenvolvimentoEnums from '../enums/desenvolvimento'
+import desenvolvimentoEnums from './enums/desenvolvimento'
 
 const {MARKED, UNMARKED} = MarkStatus;
 

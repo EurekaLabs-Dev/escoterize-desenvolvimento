@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "ava",
-    "test:watch": "ava --watch"
+    "test:watch": "ava --watch",
+    "build": "babel src -d lib"
   },
   "keywords": [
     "escoterize"
@@ -26,5 +27,8 @@
       "babel-register"
     ],
     "babel": "inherit"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1"
   }
 }
