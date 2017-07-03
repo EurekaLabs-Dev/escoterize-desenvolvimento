@@ -73,3 +73,4 @@ export default function desenvolvimento(state, marcacoes) {
     .filter(segmento => !!marcacoesSegmento[segmento])
     .reduce(countBySegmento(marcacoesSegmento), state)
 }
+

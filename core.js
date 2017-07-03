@@ -1,7 +1,7 @@
-const desenvolvimento = require('./lib/desenvolvimento.js')
-const requisito = require('./lib/requisito.js')
-const especialidade = require('./lib/especialidade.js')
-const verificacao = require('./lib/verificacao.js')
+const desenvolvimento = require('./lib/desenvolvimento.js').default
+const requisito = require('./lib/requisito.js').default
+const especialidade = require('./lib/especialidade.js').default
+const verificacao = require('./lib/verificacao.js').default
 
 const core = {
   desenvolvimento,
