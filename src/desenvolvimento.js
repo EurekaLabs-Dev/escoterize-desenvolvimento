@@ -2,6 +2,8 @@ import R from 'ramda'
 import { MarkStatus } from './enums/mark'
 import {roundTo4, limiteZero, limites} from './utils'
 import desenvolvimentoEnums from './enums/desenvolvimento'
+import segmentoCategoria from './conexoes/segmentoCategoria'
+import CATEGORIA from './enums/categorias'
 
 const {MARKED, UNMARKED} = MarkStatus;
 
@@ -48,18 +50,10 @@ export const byMetadata = m => m.metadata
 export const byEspecialidadeId = m => m.especialidadeId
 export const byRamoConhecimento = m => m.metadata.ramoConhecimento
 
-const isEspecialidade = segmento => [
-    desenvolvimentoEnums.HABILIDADES_ESCOTEIRAS,
-    desenvolvimentoEnums.SERVICOS,
-    desenvolvimentoEnums.DESPORTOS,
-    desenvolvimentoEnums.CULTURA,
-    desenvolvimentoEnums.CIENCIA_TECNOLOGIA
-  ].includes(segmento)
-
 const countBySegmento = marcacoesSegmento => (state, segmento) => {
-  if (isEspecialidade(segmento)) {
+  if (segmentoCategoria(segmento) === CATEGORIA.ESPECIALIDADE) {
     const especialidadeState = countBy(byEspecialidadeId, state.especialidade || {}, marcacoesSegmento[segmento])
-    return R.set(R.lensProp('especialidade'), especialidadeState, state)
+    state = R.set(R.lensProp('especialidade'), especialidadeState, state)
   }
   const segmentoLens = R.lensProp(segmento)
   const getBySegmento = R.view(segmentoLens)

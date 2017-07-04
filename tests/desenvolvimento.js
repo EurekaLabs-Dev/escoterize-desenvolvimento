@@ -53,10 +53,11 @@ test('Calcula desenvolvimento das especialidades', t => {
       segmento: 'SERVICOS'
     }))
 
-  const result = desenvolvimento({}, marcacoes)
+  const result = desenvolvimento({SERVICOS: 0}, marcacoes)
   t.deepEqual(result, {
     especialidade: {
       11: 10
-    }
+    },
+    SERVICOS: 10
   })
 })
