@@ -1,7 +1,7 @@
 import R from 'ramda'
 import { MarkStatus } from './enums/mark'
 import {roundTo4, limiteZero, limites} from './utils'
-import desenvolvimentoEnums from './enums/desenvolvimento'
+import DESENVOLVIMENTO from './enums/desenvolvimento'
 import segmentoCategoria from './conexoes/segmentoCategoria'
 import CATEGORIA from './enums/categorias'
 
@@ -29,8 +29,7 @@ export function divisoes(quantidadeMarcacoes, quantidadeAtividades, divisoes) {
   return R.range(1, divisoes + 1)
     .reduce(
       (acc, divisao) =>
-      R.merge(acc, {[divisao]: calcularDivisao(pc, divisao, divisoes)}),
-      {}
+      R.merge(acc, {[divisao]: calcularDivisao(pc, divisao, divisoes)}), {}
     )
 }
 
@@ -51,20 +50,39 @@ export const byEspecialidadeId = m => m.especialidadeId
 export const byRamoConhecimento = m => m.metadata.ramoConhecimento
 
 const countBySegmento = marcacoesSegmento => (state, segmento) => {
-  if (segmentoCategoria(segmento) === CATEGORIA.ESPECIALIDADE) {
-    const especialidadeState = countBy(byEspecialidadeId, state.especialidade || {}, marcacoesSegmento[segmento])
-    state = R.set(R.lensProp('especialidade'), especialidadeState, state)
-  }
   const segmentoLens = R.lensProp(segmento)
   const getBySegmento = R.view(segmentoLens)
   return R.set(segmentoLens, quantidadeMarcadas(getBySegmento(state), getBySegmento(marcacoesSegmento)), state)
 }
 
-export default function desenvolvimento(state, marcacoes) {
+export function desenvolvimento(state, marcacoes) {
   const marcacoesSegmento = R.groupBy(m => m.segmento, marcacoes)
 
-  return R.keys(desenvolvimentoEnums)
+  return R.keys(DESENVOLVIMENTO)
     .filter(segmento => !!marcacoesSegmento[segmento])
     .reduce(countBySegmento(marcacoesSegmento), state)
 }
 
+export function desenvolvimentoEspecialidade(state, marcacoes) {
+  return marcacoes.reduce((acc, {ramo, type, id, total}) => {
+    const qtdAtualRamo = acc[ramo] || 0
+    const qtdEspecialidadeAtual = (acc[id] || 0) + (type === MARKED ? 1 : -1)
+    const ganhoRamo = calcularGanhoRamo(qtdEspecialidadeAtual, total, type)
+
+    return R.merge(acc, {
+      [id]: qtdEspecialidadeAtual,
+      [ramo]: qtdAtualRamo + ganhoRamo
+    })
+  }, state)
+}
+
+
+export function calcularGanhoRamo(quantidadeEspecialidade, totalEspecialidade, type) {
+  if (quantidadeEspecialidade / totalEspecialidade === 1/3 && type === MARKED) {
+    return 1
+  }
+  if ((quantidadeEspecialidade + 1) / totalEspecialidade === 1/3 && type === UNMARKED) {
+    return -1
+  }
+  return 0
+}

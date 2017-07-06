@@ -1,7 +1,7 @@
 import test from 'ava'
 import R from 'ramda'
 import {createMarcacoes} from './helpers'
-import desenvolvimento, {countBy, byMetadata, byEspecialidadeId, byRamoConhecimento} from '../src/desenvolvimento'
+import {desenvolvimento, desenvolvimentoEspecialidade, countBy, byMetadata, byEspecialidadeId, byRamoConhecimento, calcularGanhoRamo} from '../src/desenvolvimento'
 
 test('Conta especialidades', t => {
   const marcacoes = createMarcacoes('MARKED', 2)
@@ -49,15 +49,51 @@ test('Calcula desenvolvimento com base nos enums', t => {
 test('Calcula desenvolvimento das especialidades', t => {
   const marcacoes = createMarcacoes('MARKED', 10)
     .map(R.merge(R.__, {
-      especialidadeId: 11,
-      segmento: 'SERVICOS'
+      id: 11,
+      total: 12,
+      ramo: 'SERVICOS'
     }))
 
-  const result = desenvolvimento({SERVICOS: 0}, marcacoes)
+  const result = desenvolvimentoEspecialidade({}, marcacoes)
   t.deepEqual(result, {
-    especialidade: {
-      11: 10
-    },
-    SERVICOS: 10
+    11: 10,
+    SERVICOS: 1
   })
+})
+
+test('Diminui quantidade por ramo com marcação desmarcada', t => {
+  const marcacoes = createMarcacoes('UNMARKED', 1)
+    .map(R.merge(R.__, {
+      id: 11,
+      total: 12,
+      ramo: 'SERVICOS'
+    }))
+
+  const result = desenvolvimentoEspecialidade({
+    SERVICOS: 1,
+    11: 4
+  }, marcacoes)
+  t.deepEqual(result, {
+    11: 3,
+    SERVICOS: 0
+  })
+})
+
+test('Deve calcular ganho de ramo para 1', t => {
+  const result = calcularGanhoRamo(3, 9, 'MARKED')
+  const result2 = calcularGanhoRamo(4, 12, 'MARKED')
+  t.is(result, 1)
+  t.is(result2, 1)
+})
+
+test('Deve calcular ganho de ramo para 0', t => {
+  const result = calcularGanhoRamo(1, 9, 'MARKED')
+  const result2 = calcularGanhoRamo(3, 9, 'UNMARKED')
+  t.is(result, 0)
+  t.is(result2, 0)
+})
+
+test('Deve calcular ganho de ramo para -1', t => {
+  const result = calcularGanhoRamo(2, 9, 'UNMARKED')
+  t.is(result, -1)
 })
