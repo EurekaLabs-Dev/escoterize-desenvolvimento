@@ -50,6 +50,13 @@ export const byEspecialidadeId = m => m.especialidadeId
 export const byRamoConhecimento = m => m.metadata.ramoConhecimento
 
 const countBySegmento = marcacoesSegmento => (state, segmento) => {
+  if (segmentoCategoria(segmento) === CATEGORIA.ESPECIALIDADE) {
+    return R.over(
+      R.lensProp('especialidade'),
+      state => desenvolvimentoEspecialidade(state, marcacoesSegmento[segmento]),
+      state
+    )
+  }
   const segmentoLens = R.lensProp(segmento)
   const getBySegmento = R.view(segmentoLens)
   return R.set(segmentoLens, quantidadeMarcadas(getBySegmento(state), getBySegmento(marcacoesSegmento)), state)
@@ -64,14 +71,14 @@ export function desenvolvimento(state, marcacoes) {
 }
 
 export function desenvolvimentoEspecialidade(state, marcacoes) {
-  return marcacoes.reduce((acc, {ramo, type, id, total}) => {
-    const qtdAtualRamo = acc[ramo] || 0
+  return marcacoes.reduce((acc, {segmento, type, id, total}) => {
+    const qtdAtualRamo = acc[segmento] || 0
     const qtdEspecialidadeAtual = (acc[id] || 0) + (type === MARKED ? 1 : -1)
     const ganhoRamo = calcularGanhoRamo(qtdEspecialidadeAtual, total, type)
 
     return R.merge(acc, {
       [id]: qtdEspecialidadeAtual,
-      [ramo]: qtdAtualRamo + ganhoRamo
+      [segmento]: qtdAtualRamo + ganhoRamo
     })
   }, state)
 }

@@ -51,7 +51,7 @@ test('Calcula desenvolvimento das especialidades', t => {
     .map(R.merge(R.__, {
       id: 11,
       total: 12,
-      ramo: 'SERVICOS'
+      segmento: 'SERVICOS'
     }))
 
   const result = desenvolvimentoEspecialidade({}, marcacoes)
@@ -66,7 +66,7 @@ test('Diminui quantidade por ramo com marcação desmarcada', t => {
     .map(R.merge(R.__, {
       id: 11,
       total: 12,
-      ramo: 'SERVICOS'
+      segmento: 'SERVICOS'
     }))
 
   const result = desenvolvimentoEspecialidade({
@@ -96,4 +96,27 @@ test('Deve calcular ganho de ramo para 0', t => {
 test('Deve calcular ganho de ramo para -1', t => {
   const result = calcularGanhoRamo(2, 9, 'UNMARKED')
   t.is(result, -1)
+})
+
+test('Calcula desenvolvimento com especialidades', t => {
+  const initialState = {
+    PROMESSA_ESCOTEIRA_LOBINHO: 8,
+    PROMESSA_ESCOTEIRA_SENIOR: 7,
+    PROGRESSAO_SENIOR: 4,
+    especialidade: {}
+  }
+
+  const marcacoes = createMarcacoes('MARKED', 4)
+    .map(R.merge(R.__, {segmento: 'CULTURA', id: 23, type: 'MARKED', total: 9}))
+   
+  const result = desenvolvimento(initialState, marcacoes)
+  t.deepEqual(result, {
+    PROMESSA_ESCOTEIRA_LOBINHO: 8,
+    PROMESSA_ESCOTEIRA_SENIOR: 7,
+    PROGRESSAO_SENIOR: 4,
+    especialidade: {
+      23: 4,
+      CULTURA: 1
+    }
+  })
 })
