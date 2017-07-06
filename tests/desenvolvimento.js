@@ -57,7 +57,7 @@ test('Calcula desenvolvimento das especialidades', t => {
   const result = desenvolvimentoEspecialidade({}, marcacoes)
   t.deepEqual(result, {
     11: 10,
-    SERVICOS: 1
+    SERVICOS: {total: 1, n1: 0, n2: 1, n3: 0}
   })
 })
 
@@ -70,12 +70,12 @@ test('Diminui quantidade por ramo com marcação desmarcada', t => {
     }))
 
   const result = desenvolvimentoEspecialidade({
-    SERVICOS: 1,
+    SERVICOS: { total: 1, n1: 1, n2: 0, n3: 0 },
     11: 4
   }, marcacoes)
   t.deepEqual(result, {
     11: 3,
-    SERVICOS: 0
+    SERVICOS: { total: 0, n1: 0, n2: 0, n3: 0 }
   })
 })
 
@@ -116,7 +116,8 @@ test('Calcula desenvolvimento com especialidades', t => {
     PROGRESSAO_SENIOR: 4,
     especialidade: {
       23: 4,
-      CULTURA: 1
+      CULTURA: { total: 1, n1: 1, n2: 0, n3: 0 }
     }
   })
 })
+

@@ -4,6 +4,7 @@ import {roundTo4, limiteZero, limites} from './utils'
 import DESENVOLVIMENTO from './enums/desenvolvimento'
 import segmentoCategoria from './conexoes/segmentoCategoria'
 import CATEGORIA from './enums/categorias'
+import {nivelEspecialidade} from './especialidade'
 
 const {MARKED, UNMARKED} = MarkStatus;
 
@@ -72,15 +73,40 @@ export function desenvolvimento(state, marcacoes) {
 
 export function desenvolvimentoEspecialidade(state, marcacoes) {
   return marcacoes.reduce((acc, {segmento, type, id, total}) => {
-    const qtdAtualRamo = acc[segmento] || 0
-    const qtdEspecialidadeAtual = (acc[id] || 0) + (type === MARKED ? 1 : -1)
+    const qtdAtualRamo = R.pathOr(0, [segmento, 'total'], acc)
+    const ganhoEspecialidade = type === MARKED ? 1 : -1
+    const qtdEspecialidadeAtual = (acc[id] || 0) + ganhoEspecialidade
     const ganhoRamo = calcularGanhoRamo(qtdEspecialidadeAtual, total, type)
+    const nivelAtual = nivelEspecialidade(qtdEspecialidadeAtual, total)
+    const nivelAnterior = nivelEspecialidade(qtdEspecialidadeAtual - ganhoEspecialidade, total)
+    const mudouNivel = nivelAtual !== nivelAnterior
 
-    return R.merge(acc, {
-      [id]: qtdEspecialidadeAtual,
-      [segmento]: qtdAtualRamo + ganhoRamo
-    })
-  }, state)
+    const setNiveisDefault = R.over(
+      R.lensProp(segmento),
+      (ramo) => R.merge(ramo, ({n1: ramo.n1 || 0, n2: ramo.n2 || 0, n3: ramo.n3 || 0}))
+    )
+    const setNivelAtual = R.over(
+      R.lensPath([segmento, 'n'+nivelAtual]),
+      (x = 0) => mudouNivel ? x + 1 : x
+    )
+    const setNivelAnterior = R.over(
+      R.lensPath([segmento, 'n'+nivelAnterior]),
+      x => mudouNivel ? x - 1 : x
+    )
+    const setTotalSegmento = R.set(
+      R.lensPath([segmento, 'total']),
+      qtdAtualRamo + ganhoRamo
+    )
+    const setQtdEspecialidade = R.set(R.lensProp(id), qtdEspecialidadeAtual)
+
+    return R.compose(
+      nivelAtual > 0 ? setNivelAtual : R.identity,
+      nivelAnterior > 0 ? setNivelAnterior : R.identity,
+      setNiveisDefault,
+      setTotalSegmento,
+      setQtdEspecialidade
+    )(acc)
+  }, state || {})
 }
 
 
