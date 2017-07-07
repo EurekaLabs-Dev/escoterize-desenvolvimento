@@ -15,70 +15,63 @@ const validateRamoConhecimento = ramo => {
   return ramo
 }
 
-export const requisitoSatisfeitoEspecialidade = ({percentuais, requisito}) => id =>
+export const percentualRequisitoEspecialidade = (percentual, nivelRequirido) =>
+  limites1(nivelEspecialidadeFromPC(percentual) / nivelRequirido)
+
+//export const requisitoSatisfeitoEspecialidade = ({percentuais, requisito}) => id =>
+//  percentualRequisitoEspecialidade(percentuais[id], requisito)
+
+//export const requisitoSatisfeitoRamoConhecimento = ({requisito, niveis}) => ramo =>
+//  R.compose(
+//    limites1,
+//    pc => pc / R.keys(requisito[ramo]).length,
+//    R.reduce((pc, nivel) =>
+//      pc + niveis[ramo][nivel] / requisito[ramo][nivel], 0),
+//    R.keys
+//  )(requisito[ramo])
+//
+//export const sumRequisitosSatisfeitos = (data, requisitoSatisfeito) =>
+//  R.compose(
+//    percentuais => R.reduce(R.add, 0, percentuais) / percentuais.length,
+//    R.map(requisitoSatisfeito(data)),
+//    R.keys
+//  )(data.requisito)
+
+export const percentualEspecialidades = (requisito, desenvolvimento) =>
   R.compose(
     limites1,
-    nivel => nivel / requisito[id],
-    nivelEspecialidadeFromPC
-  )(percentuais[id])
-
-export const requisitoSatisfeitoRamoConhecimento = ({requisito, niveis}) => ramo =>
-  R.compose(
-    limites1,
-    pc => pc / R.keys(requisito[ramo]).length,
-    R.reduce((pc, nivel) =>
-      pc + niveis[ramo][nivel] / requisito[ramo][nivel], 0),
-    R.keys
-  )(requisito[ramo])
-
-export const sumRequisitosSatisfeitos = (data, requisitoSatisfeito) =>
-  R.compose(
-    percentuais => R.reduce(R.add, 0, percentuais) / percentuais.length,
-    R.map(requisitoSatisfeito(data)),
-    R.keys
-  )(data.requisito)
-
-const sumPropsValues = obj =>
-  R.compose(
-    R.reduce(({acc, key}) => acc + obj[key]),
-    R.keys
-  )(obj)
-
-const reduceNiveisRamo = (nivelMinimo) => (acc, ramo) =>
-  acc + sumNiveisRamoConhecimento(ramo, nivelMinimo)
-
-const sumNiveisRamoConhecimento = (ramo, nivelMinimo) =>
-  R.compose(
+    total => total / requisito.quantidade,
     R.reduce(R.add, 0),
-    R.map(nivel => ramo[nivel]),
-    R.filter(nivel => nivel >= nivelMinimo),
+    R.map(id => percentualRequisitoEspecialidade(desenvolvimento[id], requisito.nivelMinimo)),
     R.keys
-  )(ramo)
+  )(desenvolvimento)
 
-
-export const calcularPercentualRamos =({requisito, ramosConhecimento})  =>
+export const calcularPercentualRamos = (requisito, desenvolvimento)  =>
   R.compose(
     limites1,
     roundTo2,
     x => x / requisito.quantidadeMinima,
-    R.reduce(reduceNiveisRamo(requisito.nivelMinimo), 0),
-    R.map(R.compose(
-      key => ramosConhecimento[key],
-      validateRamoConhecimento
-    )),
+    R.reduce(R.add, 0),
+    R.map(
+      R.compose(
+        R.flatten,
+        values => R.range(requisito.nivelMinimo, 4)
+          .map(nivel => values['n'+nivel]),
+        key => desenvolvimento[key]
+      )
+    ),
     R.keys
-  )(ramosConhecimento)
+  )(desenvolvimento)
 
-export const calcularPercentualDistribuicao = ({requisito, ramosConhecimento}) =>
+export const calcularPercentualDistribuicao = (requisito, desenvolvimento) =>
   R.compose(
     limites1,
     roundTo2,
     x => x / 5,
     R.reduce(R.add, 0),
-    R.map(key =>
-      sumNiveisRamoConhecimento(ramosConhecimento[key], requisito.nivelMinimo) > 0 ? 1 : 0),
+    R.map(key => desenvolvimento[key].total > 0 ? 1 : 0),
     R.keys
-  )(ramosConhecimento)
+  )(desenvolvimento)
 
 const pesos = {
   quantidadeEspecialidadeRamos: 9/10,
@@ -87,18 +80,26 @@ const pesos = {
   ramosRequeridos: 1/2
 }
 
-export const calcularPercentual = data => {
-  const pcQuantidadeEspecialidadeRamos = calcularPercentualRamos(data)
-  const pcEspecialidadesDistribuidas = calcularPercentualDistribuicao(data)
-  const pcEspecialidadesRequeridas = sumRequisitosSatisfeitos({
-    requisito: data.requisito.especialidades,
-    percentuais: data.percentuais
-  }, requisitoSatisfeitoEspecialidade)
-  const pcRamosRequeridos = sumRequisitosSatisfeitos({
-    requisito: data.requisito.ramosConhecimento,
-    niveis: data.ramosConhecimento
-  }, requisitoSatisfeitoRamoConhecimento)
+const percentuaisEspecialidadesEspecificas = (requisito, desenvolvimento) => {
+  const desenvolvimentoEspecifico = requisito.especialidades.reduce((acc, id) => 
+    R.merge(acc, {[id]: desenvolvimento[id]}) 
+    , {}
+  )
+  return percentualEspecialidades({
+    nivelMinimo: requisito.nivelMinimo,
+    quantidade: requisito.especialidades.length
+  }, desenvolvimentoEspecifico)
+}
 
+export const percentualCordao = (requisito, desenvolvimento) => {
+
+}
+
+export const calcularPercentual = (requisito, desenvolvimento) => {
+  const pcQuantidadeEspecialidadeRamos = calcularPercentualRamos(requisito, desenvolvimento)
+  const pcEspecialidadesDistribuidas = calcularPercentualDistribuicao(requisito, desenvolvimento)
+  const pcRamosRequeridos = calcularPercentualRamos(requisito, desenvolvimento)
+  const pcEspecialidadesRequeridas = percentuaisEspecialidadesEspecificas(requisito, desenvolvimento)
 
   const result = (pcQuantidadeEspecialidadeRamos * pesos.quantidadeEspecialidadeRamos
     + pcEspecialidadesDistribuidas * pesos.especialidadesDistribuidas)
