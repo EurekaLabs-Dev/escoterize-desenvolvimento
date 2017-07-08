@@ -2,40 +2,8 @@ import R from 'ramda'
 import {nivelEspecialidadeFromPC} from './especialidade'
 import { limites1, roundTo2 } from './utils'
 
-const validateRamoConhecimento = ramo => {
-  const invalid = ![
-    'servico',
-    'cultura',
-    'habilidadesEscoteiras',
-    'desportos',
-    'cienciaTecnologia'].includes(ramo)
-  if (invalid) {
-    throw Error('Ramo inválido. ' + ramo)
-  }
-  return ramo
-}
-
 export const percentualRequisitoEspecialidade = (percentual, nivelRequirido) =>
   limites1(nivelEspecialidadeFromPC(percentual) / nivelRequirido)
-
-//export const requisitoSatisfeitoEspecialidade = ({percentuais, requisito}) => id =>
-//  percentualRequisitoEspecialidade(percentuais[id], requisito)
-
-//export const requisitoSatisfeitoRamoConhecimento = ({requisito, niveis}) => ramo =>
-//  R.compose(
-//    limites1,
-//    pc => pc / R.keys(requisito[ramo]).length,
-//    R.reduce((pc, nivel) =>
-//      pc + niveis[ramo][nivel] / requisito[ramo][nivel], 0),
-//    R.keys
-//  )(requisito[ramo])
-//
-//export const sumRequisitosSatisfeitos = (data, requisitoSatisfeito) =>
-//  R.compose(
-//    percentuais => R.reduce(R.add, 0, percentuais) / percentuais.length,
-//    R.map(requisitoSatisfeito(data)),
-//    R.keys
-//  )(data.requisito)
 
 export const percentualEspecialidades = (requisito, desenvolvimento) =>
   R.compose(

@@ -10,6 +10,7 @@ const core = {
   divisoes: desenvolvimento.divisoes,
   percentualCordao: requisito.percentualCordao,
   percentualRamos: requisito.percentualRamos,
+  percentualEspecialidades: requisito.percentualEspecialidades,
   verificacao,
   nivelEspecialidade: especialidade.nivelEspecialidade
 }
