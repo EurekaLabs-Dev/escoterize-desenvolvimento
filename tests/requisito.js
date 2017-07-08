@@ -1,6 +1,6 @@
 import test from 'ava'
 import R from 'ramda'
-import {percentualEspecialidades, percentualRequisitoEspecialidade, calcularPercentualDistribuicao, requisitoSatisfeitoEspecialidade, calcularPercentual, calcularPercentualRamos} from '../src/requisito'
+import {percentualEspecialidades, percentualCordao, percentualRequisitoEspecialidade, calcularPercentualDistribuicao, requisitoSatisfeitoEspecialidade, calcularPercentual, percentualRamos} from '../src/requisito'
 
 test('Calcula percentual do requisito da especialidade em 100%', t => {
   const result = percentualRequisitoEspecialidade(4/6, 2)
@@ -45,7 +45,7 @@ test('Calcula percentual da conquista dos ramos de acordo com requisito', t=> {
     DESPORTOS: { n3: 2 },
     CIENCIA_TECNOLOGIA: {n3: 2}
   }
-  const result = calcularPercentualRamos(requisito, desenvolvimento)
+  const result = percentualRamos(requisito, desenvolvimento)
   t.is(result, 1)
 })
 
@@ -62,7 +62,7 @@ test('Calcula percentual intermediario da conquista dos ramos de acordo com requ
     CIENCIA_TECNOLOGIA: {n3: 5}
   }
 
-  const result = calcularPercentualRamos(requisito, desenvolvimento)
+  const result = percentualRamos(requisito, desenvolvimento)
   t.is(result, 0.73)
 })
 
@@ -80,7 +80,7 @@ test('Calcula percentual dos ramos sem contar especialidades', t=> {
     10: 3/10
   }
 
-  const result = calcularPercentualRamos(requisito, desenvolvimento)
+  const result = percentualRamos(requisito, desenvolvimento)
   t.is(result, 0.73)
 })
 
@@ -101,51 +101,10 @@ test('Calcula percentual da distribuição entre os ramos', t => {
   t.is(result, 3/5)
 })
 
-test('Calcula percentual faltando um nivel em seviço', t=> {
-  const desenvolvimento = {
-    SERVICOS: { n3: 2, total: 2 },
-    CULTURA: { n3: 4, total: 4 },
-    HABILIDADES_ESCOTEIRAS: { n3: 0, total: 0},
-    DESPORTOS: { n3: 0, total: 0 },
-    CIENCIA_TECNOLOGIA: {n3: 0, total: 0},
-    10: 1
-  }
-  const result = calcularPercentual(requisitoCordaoDourado, desenvolvimento)
-  t.is(result, 0.43)
-})
-
-test('Calcula percentual de uma conquista com base no requisito', t=> {
-  const desenvolvimento = {
-    SERVICOS: { n3: 4, total: 4 },
-    CULTURA: { n3: 4, total: 4 },
-    HABILIDADES_ESCOTEIRAS: { n3: 3, total: 3 },
-    DESPORTOS: { n3: 3, total: 3 },
-    CIENCIA_TECNOLOGIA: { n3: 1, total: 1 },
-    10: 1
-  }
-  const result = calcularPercentual(requisitoCordaoDourado, desenvolvimento)
-  t.is(result, 1)
-})
-
-
-test('Calcula percentual para quando não distribuir em todos os ramos', t=> {
-  const desenvolvimento = {
-    SERVICOS: { n3: 4, total: 4 },
-    CULTURA: { n3: 4, total: 4 },
-    HABILIDADES_ESCOTEIRAS: { n3: 0, total: 0 },
-    DESPORTOS: { n3: 0, total: 0 },
-    CIENCIA_TECNOLOGIA: { n3: 0, total: 0 },
-    10: 1
-  }
-  const result = calcularPercentual(requisitoCordaoDourado, desenvolvimento)
-  t.is(result, 0.54)
-})
-
-test('Calcular percentual para cordão do desafio sênior em 100%', t=> {
+test('Calcular percentual para cordão verde e Amarelo em 100%', t=> {
   const requisito = {
-    quantidadeMinima: 8,
-    nivelMinimo: 4,
-    especialidades: [12,34,44,56,76]//uma é obrigatória
+    quantidadeMinima: 6,
+    nivelMinimo: 1
   }
   const desenvolvimento = {
     SERVICOS: { n3: 2, total: 2 },
@@ -154,7 +113,63 @@ test('Calcular percentual para cordão do desafio sênior em 100%', t=> {
     DESPORTOS: { n3: 2, total: 2 },
     CIENCIA_TECNOLOGIA: { n3: 2, total: 2 }
   }
-  const result = calcularPercentual(requisito, desenvolvimento)
+  const result = percentualRamos(requisito, desenvolvimento)
+  t.is(result, 1)
+})
+
+test('Calcular percentual para cordão vermelho e branco em 100%', t=> {
+  const requisito = {
+    quantidadeMinima: 12,
+    nivelMinimo: 2,
+    especialidades: [10],
+    validaServicos: true
+  }
+  const desenvolvimento = {
+    SERVICOS: { n2: 1, n3: 2, total: 3 },
+    CULTURA: { n1: 4, n2: 2, total: 2 },
+    HABILIDADES_ESCOTEIRAS: { n2: 2, total: 2 },
+    DESPORTOS: { n3: 2, total: 2 },
+    CIENCIA_TECNOLOGIA: { n3: 2, total: 2 },
+    10: 4/6
+  }
+  const result = percentualCordao(requisito, desenvolvimento)
+  t.is(result, 1)
+})
+
+test('Calcular percentual para cordão vermelho e branco em parcial', t=> {
+  const requisito = {
+    quantidadeMinima: 12,
+    nivelMinimo: 2,
+    especialidades: [10],
+    validaServicos: true
+  }
+  const desenvolvimento = {
+    SERVICOS: { n2: 1, n3: 1, total: 2 },
+    CULTURA: { n1: 0, n2: 0, total: 0 },
+    HABILIDADES_ESCOTEIRAS: { n2: 2, total: 2 },
+    DESPORTOS: { n3: 2, total: 2 },
+    CIENCIA_TECNOLOGIA: { n3: 2, total: 2 },
+    10: 2/6
+  }
+  const result = percentualCordao(requisito, desenvolvimento)
+  t.is(result, 0.66)
+})
+
+test('Calcular percentual para cordão do desafio sênior em 100%', t=> {
+  const requisito = {
+    quantidadeMinima: 8,
+    nivelMinimo: 3,
+    especialidades: [12,34,44,56,76],//uma é obrigatória
+  }
+  const desenvolvimento = {
+    SERVICOS: { n3: 2, total: 2 },
+    CULTURA: { n2: 2, total: 2 },
+    HABILIDADES_ESCOTEIRAS: { n2: 2, total: 2 },
+    DESPORTOS: { n3: 2, total: 2 },
+    CIENCIA_TECNOLOGIA: { n3: 2, total: 2 },
+    44: 1
+  }
+  const result = percentualCordao(requisito, desenvolvimento)
   t.is(result, 1)
 })
 
@@ -167,47 +182,13 @@ test('Calcular percentual para cordão dourado em 100%', t=> {
     validaServicos: true
   }
   const desenvolvimento = {
-    SERVICOS: { n3: 2, total: 2 },
+    SERVICOS: { n3: 3, total: 3 },
     CULTURA: { n2: 2, total: 2 },
-    HABILIDADES_ESCOTEIRAS: { n2: 2, total: 2 },
+    HABILIDADES_ESCOTEIRAS: { n1: 4, n2: 2, total: 2 },
     DESPORTOS: { n3: 2, total: 2 },
-    CIENCIA_TECNOLOGIA: { n3: 2, total: 2 }
+    CIENCIA_TECNOLOGIA: { n3: 2, total: 2 },
+    10: 1
   }
-  const result = calcularPercentual(requisito, desenvolvimento)
+  const result = percentualCordao(requisito, desenvolvimento)
   t.is(result, 1)
 })
-
-test('Calcular percentual para cordão verde e Amarelo em 100%', t=> {
-  const requisito = {
-    quantidadeMinima: 6
-  }
-  const desenvolvimento = {
-    SERVICOS: { n3: 2, total: 2 },
-    CULTURA: { n2: 2, total: 2 },
-    HABILIDADES_ESCOTEIRAS: { n2: 2, total: 2 },
-    DESPORTOS: { n3: 2, total: 2 },
-    CIENCIA_TECNOLOGIA: { n3: 2, total: 2 }
-  }
-  const result = calcularPercentual(requisito, desenvolvimento)
-  t.is(result, 1)
-})
-
-
-test('Calcular percentual para cordão vermelho e branco em 100%', t=> {
-  const requisito = {
-    quantidadeMinima: 12,
-    nivelMinimo: 2,
-    especialidades: [10],
-    validaServicos: true
-  }
-  const desenvolvimento = {
-    SERVICOS: { n3: 2, total: 2 },
-    CULTURA: { n2: 2, total: 2 },
-    HABILIDADES_ESCOTEIRAS: { n2: 2, total: 2 },
-    DESPORTOS: { n3: 2, total: 2 },
-    CIENCIA_TECNOLOGIA: { n3: 2, total: 2 }
-  }
-  const result = calcularPercentual(requisito, desenvolvimento)
-  t.is(result, 1)
-})
-

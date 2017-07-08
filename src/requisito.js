@@ -46,17 +46,17 @@ export const percentualEspecialidades = (requisito, desenvolvimento) =>
     R.keys
   )(desenvolvimento)
 
-export const calcularPercentualRamos = (requisito, desenvolvimento)  =>
+export const percentualRamos = (requisito, desenvolvimento)  =>
   R.compose(
     limites1,
     roundTo2,
     x => x / requisito.quantidadeMinima,
     R.reduce(R.add, 0),
+    R.flatten,
     R.map(
       R.compose(
-        R.flatten,
         values => R.range(requisito.nivelMinimo, 4)
-          .map(nivel => values['n'+nivel]),
+          .map(nivel => values['n'+nivel] || 0),
         key => desenvolvimento[key]
       )
     ),
@@ -81,32 +81,39 @@ const pesos = {
 }
 
 const percentuaisEspecialidadesEspecificas = (requisito, desenvolvimento) => {
-  const desenvolvimentoEspecifico = requisito.especialidades.reduce((acc, id) => 
-    R.merge(acc, {[id]: desenvolvimento[id]}) 
+  const desenvolvimentoEspecifico = requisito.especialidades.reduce((acc, id) =>
+    R.merge(acc, {[id]: desenvolvimento[id] || 0})
     , {}
   )
-  return percentualEspecialidades({
+  const pc =  percentualEspecialidades({
     nivelMinimo: requisito.nivelMinimo,
-    quantidade: requisito.especialidades.length
+    quantidade: requisito.quantidadeMinima
   }, desenvolvimentoEspecifico)
+  return limites1(pc)
 }
+
+const percentualServicos = ({SERVICOS: {n2 = 0, n3 = 0}}) =>
+  limites1((n2 + n3)/ 3)
 
 export const percentualCordao = (requisito, desenvolvimento) => {
+  const {validaServicos} = requisito
+  const totalEspecialidadesPeso = requisito.quantidadeMinima + 3 + 2
+  const pesos = [
+    0.9 * requisito.quantidadeMinima / totalEspecialidadesPeso,
+    0.1 * requisito.quantidadeMinima / totalEspecialidadesPeso,
+    (validaServicos ? 3 : 0) / totalEspecialidadesPeso,
+    (validaServicos ? 2 : 5) / totalEspecialidadesPeso
+  ]
+  const percentuais = [
+    percentualRamos(R.merge(requisito, {nivelMinimo: 1}), desenvolvimento),
+    calcularPercentualDistribuicao(requisito, desenvolvimento),
+    percentualServicos(desenvolvimento),
+    percentuaisEspecialidadesEspecificas(R.merge(requisito, {quantidadeMinima: 1}), desenvolvimento),
+  ]
 
-}
-
-export const calcularPercentual = (requisito, desenvolvimento) => {
-  const pcQuantidadeEspecialidadeRamos = calcularPercentualRamos(requisito, desenvolvimento)
-  const pcEspecialidadesDistribuidas = calcularPercentualDistribuicao(requisito, desenvolvimento)
-  const pcRamosRequeridos = calcularPercentualRamos(requisito, desenvolvimento)
-  const pcEspecialidadesRequeridas = percentuaisEspecialidadesEspecificas(requisito, desenvolvimento)
-
-  const result = (pcQuantidadeEspecialidadeRamos * pesos.quantidadeEspecialidadeRamos
-    + pcEspecialidadesDistribuidas * pesos.especialidadesDistribuidas)
-    * 0.9
-    + ((pcEspecialidadesRequeridas * pesos.especialidadesRequeridas
-      + pcRamosRequeridos * pesos.ramosRequeridos))
-    * 0.1
-
-  return roundTo2(result)
+  return R.compose(
+    roundTo2,
+    R.reduce(R.add, 0),
+    R.map(([peso, pc]) => peso * pc)
+  )(R.zip(pesos, percentuais))
 }

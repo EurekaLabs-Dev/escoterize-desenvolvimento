@@ -1,5 +1,5 @@
 const desenvolvimento = require('./lib/desenvolvimento')
-const requisito = require('./lib/requisito.js').default
+const requisito = require('./lib/requisito.js')
 const especialidade = require('./lib/especialidade.js')
 const verificacao = require('./lib/verificacao.js').default
 
@@ -8,7 +8,8 @@ const core = {
   desenvolvimentoEspecialidade: desenvolvimento.desenvolvimentoEspecialidade,
   percentual: desenvolvimento.percentual,
   divisoes: desenvolvimento.divisoes,
-  requisito,
+  percentualCordao: requisito.percentualCordao,
+  percentualRamos: requisito.percentualRamos,
   verificacao,
   nivelEspecialidade: especialidade.nivelEspecialidade
 }
