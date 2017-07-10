@@ -17,6 +17,12 @@ export const percentualEspecialidades = (requisito, desenvolvimento) =>
     R.keys
   )(desenvolvimento)
 
+const getQuantidadesAcimaNivelMinimo = (requisito, desenvolvimento) => R.pipe(
+  key => desenvolvimento[key],
+  values => R.range(requisito.nivelMinimo, 4)
+  .map(nivel => values['n'+nivel] || 0),
+)
+
 export const percentualRamos = (requisito, desenvolvimento)  =>
   R.compose(
     limites1,
@@ -24,13 +30,7 @@ export const percentualRamos = (requisito, desenvolvimento)  =>
     x => x / requisito.quantidadeMinima,
     R.reduce(R.add, 0),
     R.flatten,
-    R.map(
-      R.compose(
-        values => R.range(requisito.nivelMinimo, 4)
-          .map(nivel => values['n'+nivel] || 0),
-        key => desenvolvimento[key]
-      )
-    ),
+    R.map(getQuantidadesAcimaNivelMinimo(requisito, desenvolvimento)),
     R.keys
   )(desenvolvimento)
 

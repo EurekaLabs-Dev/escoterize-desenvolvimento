@@ -204,3 +204,5 @@ test('Calcular percentual para cordão dourado em 100%', t=> {
   const result = percentualCordao(requisito, desenvolvimento)
   t.is(result, 1)
 })
+
+

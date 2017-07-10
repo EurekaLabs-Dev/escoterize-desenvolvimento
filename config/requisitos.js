@@ -10,7 +10,7 @@ module.exports = {
   vermelhoBranco : {
     quantidadeMinima: 12,
     nivelMinimo: 2,
-    especialidades: [],
+    especialidades: [107],
     validaServicos: true
   },
   desafioSenior : {
@@ -21,7 +21,7 @@ module.exports = {
   dourado : {
     quantidadeMinima: 15,
     nivelMinimo: 3,
-    especialidades: [],
+    especialidades: [107],
     validaServicos: true
   }
 }
