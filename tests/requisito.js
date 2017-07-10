@@ -17,11 +17,23 @@ test('Calcula percentual de especialidades por seu requisito', t => {
 
   const requisito = {
     nivelMinimo: 2,
-    quantidade: 4
+    quantidadeMinima: 4
   }
 
   const result = percentualEspecialidades(requisito, desenvolvimento)
   t.is(result, 0.50)
+})
+
+test('Calcula percentual de especialidades utilizando os três maiores percentuais', t => {
+  const desenvolvimento = { 10: 1, 11: 1, 14: 1/3, 15: 2/3 }
+
+  const requisito = {
+    nivelMinimo: 3,
+    quantidadeMinima: 3
+  }
+
+  const result = percentualEspecialidades(requisito, desenvolvimento)
+  t.is(result, 0.89)
 })
 
 const requisitoCordaoDourado = {

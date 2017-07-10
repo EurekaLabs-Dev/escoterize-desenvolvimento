@@ -7,9 +7,12 @@ export const percentualRequisitoEspecialidade = (percentual, nivelRequirido) =>
 
 export const percentualEspecialidades = (requisito, desenvolvimento) =>
   R.compose(
+    roundTo2,
     limites1,
-    total => total / requisito.quantidade,
+    total => total / requisito.quantidadeMinima,
     R.reduce(R.add, 0),
+    R.take(requisito.quantidadeMinima),
+    R.sort((a, b) => b -a ),
     R.map(id => percentualRequisitoEspecialidade(desenvolvimento[id], requisito.nivelMinimo)),
     R.keys
   )(desenvolvimento)
@@ -55,7 +58,7 @@ const percentuaisEspecialidadesEspecificas = (requisito, desenvolvimento) => {
   )
   const pc =  percentualEspecialidades({
     nivelMinimo: requisito.nivelMinimo,
-    quantidade: requisito.quantidadeMinima
+    quantidadeMinima: requisito.quantidadeMinima
   }, desenvolvimentoEspecifico)
   return limites1(pc)
 }
