@@ -1,4 +1,8 @@
 module.exports = {
+  insigniasModalidadeEscoteiro: {
+    nivelMinimo: 2,
+    quantidadeMinima: 3
+  },
   insigniasModalidadeSenior: {
     nivelMinimo: 3,
     quantidadeMinima: 3
