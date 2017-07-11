@@ -26,14 +26,15 @@ const desenvolvimentoSenior = {
     }
 }
 test('Calcular grau maximo do sênior', t => {
-  t.is(calcularSenior(desenvolvimentoSenior), 1)
+  const pcModalidade = 1
+  t.is(calcularSenior(desenvolvimentoSenior, pcModalidade), 1)
 })
 
-test('Calcular grau maximo do sênio sem uma das variaveis para conquista', t => {
+test('Calcular grau maximo do sênior sem uma das variaveis para conquista', t => {
   const desenvolvimento = R.merge(desenvolvimentoSenior, {
     PROGRESSAO_SENIOR: 0
   })
-  t.is(calcularSenior(desenvolvimento), 0.67)
+  t.is(calcularSenior(desenvolvimento, 1), 0.63)
 })
 
 test('Calcular grau maximo do lobinho', t => {
@@ -66,5 +67,5 @@ test('Calcular grau maximo do escoteiro', t => {
       DESPORTOS: {n1: 4, n2: 0, n3: 0, total: 4},
     }
   }
-  t.is(calcularEscoteiro(desenvolvimento), 1)
+  t.is(calcularEscoteiro(desenvolvimento, 1), 1)
 })

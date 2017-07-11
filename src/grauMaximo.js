@@ -44,17 +44,19 @@ export const insigniaEspecialEscoteiro = desenvolvimento =>
     desenvolvimento.ACAO_COMUNITARIA|| 0,
   ])
 
-export const calcularSenior = desenvolvimento => {
+export const calcularSenior = (desenvolvimento, pcModalidade) => {
   const values = [
     desenvolvimento.PROGRESSAO_SENIOR,
     insigniaEspecialSenior(desenvolvimento),
-    percentualCordao(requisitos.dourado, desenvolvimento.especialidade)
+    percentualCordao(requisitos.dourado, desenvolvimento.especialidade),
+    pcModalidade
   ]
 
   const pesos = [
-    1 / 3,
-    1 / 3,
-    1 / 3
+    1.5/4,
+    0.5/4,
+    1 / 4,
+    1 / 4
   ]
   return calcularComPesos(values, pesos)
 }
@@ -80,19 +82,21 @@ export const calcularLobinho = desenvolvimento => {
   return calcularComPesos(values, pesos)
 }
 
-export const calcularEscoteiro = desenvolvimento => {
+export const calcularEscoteiro = (desenvolvimento, pcModalidade) => {
   const requisitoEspecialidades = {nivelMinimo: 1, quantidadeMinima: 5}
   const values = [
     desenvolvimento.PROGRESSAO_PISTA_TRILHA,
     desenvolvimento.PROGRESSAO_RUMO_TRAVESSIA,
     insigniaEspecialEscoteiro(desenvolvimento),
-    percentualCordao(requisitos.vermelhoBranco, desenvolvimento.especialidade)
+    percentualCordao(requisitos.vermelhoBranco, desenvolvimento.especialidade),
+    pcModalidade
   ]
 
   const pesos =  [
-    1/3,
-    1/3,
-    1/3
+    1.5/4,
+    0.5/4,
+    1 / 4,
+    1 / 4
   ]
 
   return calcularComPesos(values, pesos)
