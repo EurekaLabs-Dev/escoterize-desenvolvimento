@@ -74,8 +74,8 @@ export const percentualCordao = (requisito, desenvolvimento) => {
     calcularPercentualDistribuicao(desenvolvimento, 5),
   ]
   const pesos = [
-    0.9 * requisito.quantidadeMinima,
-    0.1 * requisito.quantidadeMinima
+    0.6 * requisito.quantidadeMinima,
+    0.4 * requisito.quantidadeMinima
   ]
   let totalPesos = requisito.quantidadeMinima
   if (validaServicos) {

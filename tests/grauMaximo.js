@@ -65,6 +65,7 @@ test('Calcular grau maximo do escoteiro', t => {
       CIENCIA_TECNOLOGIA: {n1: 1, n2: 2, n3: 0, total: 3},
       HABILIDADES_ESCOTEIRAS: {n1: 1, n2: 0, n3: 1, total: 2},
       DESPORTOS: {n1: 4, n2: 0, n3: 0, total: 4},
+      CULTURA: {n1: 1, n2: 0, n3: 0, total: 1},
     }
   }
   t.is(calcularEscoteiro(desenvolvimento, 1), 1)

@@ -2,6 +2,7 @@ const desenvolvimento = require('./lib/desenvolvimento')
 const requisito = require('./lib/requisito.js')
 const especialidade = require('./lib/especialidade.js')
 const verificacao = require('./lib/verificacao.js').default
+const grauMaximo = require('./lib/grauMaximo')
 
 const core = {
   desenvolvimento: desenvolvimento.desenvolvimento,
@@ -12,7 +13,10 @@ const core = {
   percentualRamos: requisito.percentualRamos,
   percentualEspecialidades: requisito.percentualEspecialidades,
   verificacao,
-  nivelEspecialidade: especialidade.nivelEspecialidade
+  nivelEspecialidade: especialidade.nivelEspecialidade,
+  calcularLobinho: grauMaximo.calcularLobinho,
+  calcularEscoteiro: grauMaximo.calcularEscoteiro,
+  calcularSenior: grauMaximo.calcularSenior
 }
 
 exports.default = core

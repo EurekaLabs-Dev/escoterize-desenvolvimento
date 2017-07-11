@@ -1,7 +1,7 @@
 import test from 'ava'
 import conexoes, {segmentoCategoria} from '../conexoes'
 import enums, {CATEGORIA, DESENVOLVIMENTO} from '../enums'
-import {desenvolvimentoEspecialidade, desenvolvimento} from '../core'
+import {desenvolvimentoEspecialidade, desenvolvimento, calcularLobinho} from '../core'
 import {requisitos} from '../config'
 
 test('Deve importar conexoes corretamente', t => {
@@ -27,3 +27,5 @@ test('Importar configuração de requisitos', t => {
   t.truthy(requisitos.desafioSenior)
   t.truthy(requisitos.dourado)
 })
+
+test('Importar grau maximo', t => t.truthy(calcularLobinho))

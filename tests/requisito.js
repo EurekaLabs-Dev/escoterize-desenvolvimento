@@ -62,8 +62,7 @@ test('Calcula percentual da conquista dos ramos de acordo com requisito', t=> {
 })
 
 test('Calcula percentual intermediario da conquista dos ramos de acordo com requisito', t=> {
-  const requisito = {
-    quantidadeMinima: 15,
+  const requisito = { quantidadeMinima: 15,
     nivelMinimo: 3
   }
   const desenvolvimento = {
@@ -189,7 +188,7 @@ test('Calcular percentual para cordão vermelho e branco em parcial', t=> {
     10: 2/6
   }
   const result = percentualCordao(requisito, desenvolvimento)
-  t.is(result, 0.66)
+  t.is(result, 0.69)
 })
 
 test('Calcular percentual para cordão do desafio sênior em 100%', t=> {
