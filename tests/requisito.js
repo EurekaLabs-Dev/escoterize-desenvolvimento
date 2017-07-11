@@ -97,10 +97,6 @@ test('Calcula percentual dos ramos sem contar especialidades', t=> {
 })
 
 test('Calcula percentual da distribuição entre os ramos', t => {
-  const requisito = {
-    quantidadeMinima: 15,
-    nivelMinimo: 3
-  }
   const desenvolvimento = {
     SERVICOS: { n3: 1, total: 1 },
     CULTURA: { n3: 2, total: 2 },
@@ -108,15 +104,28 @@ test('Calcula percentual da distribuição entre os ramos', t => {
     DESPORTOS: { n3: 0, total: 0 },
     CIENCIA_TECNOLOGIA: {n3: 0, total: 0}
   }
-  const result = calcularPercentualDistribuicao(requisito, desenvolvimento)
+  const result = calcularPercentualDistribuicao(desenvolvimento, 5)
 
   t.is(result, 3/5)
+})
+
+test('Calcula percentual da distribuição entre os ramos. Não pode passar de 100%', t => {
+  const desenvolvimento = {
+    SERVICOS: { n3: 1, total: 1 },
+    CULTURA: { n3: 2, total: 2 },
+    HABILIDADES_ESCOTEIRAS: { n3: 2, total: 2},
+    DESPORTOS: { n3: 2, total: 2 },
+    CIENCIA_TECNOLOGIA: {n3: 0, total: 0}
+  }
+  const result = calcularPercentualDistribuicao(desenvolvimento, 3)
+
+  t.is(result, 1)
 })
 
 test('Calcular percentual para cordão verde e Amarelo em 100%', t=> {
   const requisito = {
     quantidadeMinima: 6,
-    nivelMinimo: 1
+    nivelMinimo: 1,
   }
   const desenvolvimento = {
     SERVICOS: { n3: 2, total: 2 },
@@ -125,8 +134,24 @@ test('Calcular percentual para cordão verde e Amarelo em 100%', t=> {
     DESPORTOS: { n3: 2, total: 2 },
     CIENCIA_TECNOLOGIA: { n3: 2, total: 2 }
   }
-  const result = percentualRamos(requisito, desenvolvimento)
+  const result = percentualCordao(requisito, desenvolvimento)
   t.is(result, 1)
+})
+
+test('Calcular percentual para cordão verde e Amarelo. Sem estar distribuido não pode chegar a 100%', t=> {
+  const requisito = {
+    quantidadeMinima: 6,
+    nivelMinimo: 1,
+  }
+  const desenvolvimento = {
+    SERVICOS: { n3: 0, total: 0 },
+    CULTURA: { n2: 4, total: 4 },
+    HABILIDADES_ESCOTEIRAS: { n2: 2, total: 2 },
+    DESPORTOS: { n3: 0, total: 0 },
+    CIENCIA_TECNOLOGIA: { n3: 6, total: 6 }
+  }
+  const result = percentualCordao(requisito, desenvolvimento)
+  t.true(result < 1)
 })
 
 test('Calcular percentual para cordão vermelho e branco em 100%', t=> {

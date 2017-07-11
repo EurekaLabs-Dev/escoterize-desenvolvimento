@@ -34,11 +34,11 @@ export const percentualRamos = (requisito, desenvolvimento)  =>
     R.keys
   )(desenvolvimento)
 
-export const calcularPercentualDistribuicao = (requisito, desenvolvimento) =>
+export const calcularPercentualDistribuicao = (desenvolvimento, quantidadeRamos) =>
   R.compose(
     limites1,
     roundTo2,
-    x => x / 5,
+    x => x / quantidadeRamos,
     R.reduce(R.add, 0),
     R.map(key => desenvolvimento[key].total > 0 ? 1 : 0),
     R.keys
@@ -69,22 +69,29 @@ const percentualServicos = ({nivelMinimo}, {SERVICOS: {n2 = 0, n3 = 0}}) =>
 export const percentualCordao = (requisito, desenvolvimento) => {
   const {validaServicos} = requisito
   const totalEspecialidadesPeso = requisito.quantidadeMinima + 3 + 2
-  const pesos = [
-    0.9 * requisito.quantidadeMinima / totalEspecialidadesPeso,
-    0.1 * requisito.quantidadeMinima / totalEspecialidadesPeso,
-    (validaServicos ? 3 : 0) / totalEspecialidadesPeso,
-    (validaServicos ? 2 : 5) / totalEspecialidadesPeso
-  ]
   const percentuais = [
     percentualRamos(R.merge(requisito, {nivelMinimo: 1}), desenvolvimento),
-    calcularPercentualDistribuicao(requisito, desenvolvimento),
-    percentualServicos(requisito, desenvolvimento),
-    percentuaisEspecialidadesEspecificas(R.merge(requisito, {quantidadeMinima: 1}), desenvolvimento),
+    calcularPercentualDistribuicao(desenvolvimento, 5),
   ]
-
+  const pesos = [
+    0.9 * requisito.quantidadeMinima,
+    0.1 * requisito.quantidadeMinima
+  ]
+  let totalPesos = requisito.quantidadeMinima
+  if (validaServicos) {
+    percentuais.push(percentualServicos(requisito, desenvolvimento))
+    pesos.push(3)
+    totalPesos += 3
+  }
+  if (requisito.especialidades) {
+    percentuais.push(percentuaisEspecialidadesEspecificas(R.merge(requisito, {quantidadeMinima: 1}), desenvolvimento))
+    pesos.push(2)
+    totalPesos += 2
+  }
+    
   return R.compose(
     roundTo2,
     R.reduce(R.add, 0),
-    R.map(([peso, pc]) => peso * pc)
+    R.map(([peso, pc]) => (peso/totalPesos) * pc)
   )(R.zip(pesos, percentuais))
 }
