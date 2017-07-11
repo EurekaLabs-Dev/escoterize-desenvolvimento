@@ -63,8 +63,8 @@ const percentuaisEspecialidadesEspecificas = (requisito, desenvolvimento) => {
   return limites1(pc)
 }
 
-const percentualServicos = ({SERVICOS: {n2 = 0, n3 = 0}}) =>
-  limites1((n2 + n3)/ 3)
+const percentualServicos = ({nivelMinimo}, {SERVICOS: {n2 = 0, n3 = 0}}) =>
+  nivelMinimo === 3 ?  limites1(n3/ 3) : limites1((n2 + n3)/ 3)
 
 export const percentualCordao = (requisito, desenvolvimento) => {
   const {validaServicos} = requisito
@@ -78,7 +78,7 @@ export const percentualCordao = (requisito, desenvolvimento) => {
   const percentuais = [
     percentualRamos(R.merge(requisito, {nivelMinimo: 1}), desenvolvimento),
     calcularPercentualDistribuicao(requisito, desenvolvimento),
-    percentualServicos(desenvolvimento),
+    percentualServicos(requisito, desenvolvimento),
     percentuaisEspecialidadesEspecificas(R.merge(requisito, {quantidadeMinima: 1}), desenvolvimento),
   ]
 

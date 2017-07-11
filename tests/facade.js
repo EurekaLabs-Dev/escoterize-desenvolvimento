@@ -12,6 +12,7 @@ test('Deve importar conexoes corretamente', t => {
 test('Deve importar enums corretamente', t => {
   t.is(DESENVOLVIMENTO.PROGRESSAO_RUMO_TRAVESSIA, 'PROGRESSAO_RUMO_TRAVESSIA')
   t.is(CATEGORIA.PROGRESSAO, 'PROGRESSAO')
+  t.is(DESENVOLVIMENTO.LUSOFONIA_ESCOTEIRO, 'LUSOFONIA_ESCOTEIRO')
   t.truthy(enums)
 })
 

@@ -206,3 +206,23 @@ test('Calcular percentual para cordão dourado em 100%', t=> {
 })
 
 
+test('Não pode chegar a 100% sem 3 esps. no serviço', t=> {
+  const requisito = {
+    quantidadeMinima: 15,
+    nivelMinimo: 3,
+    especialidades: [10],
+    validaServicos: true
+  }
+  const desenvolvimento = {
+    SERVICOS: { n3: 2, n2: 10, total: 3 },
+    CULTURA: { n2: 2, total: 2 },
+    HABILIDADES_ESCOTEIRAS: { n1: 4, n2: 2, total: 2 },
+    DESPORTOS: { n3: 2, total: 2 },
+    CIENCIA_TECNOLOGIA: { n3: 2, total: 2 },
+    10: 1
+  }
+  const result = percentualCordao(requisito, desenvolvimento)
+  t.is(result, 0.95)
+})
+
+
