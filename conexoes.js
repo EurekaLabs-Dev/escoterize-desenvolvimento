@@ -1,5 +1,5 @@
 const conexoes = {
-  segmentoCategoria: require('./src/conexoes/segmentoCategoria').default
+  segmentoCategoria: require('./lib/conexoes/segmentoCategoria').default
 }
 
 module.exports = conexoes

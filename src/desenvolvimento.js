@@ -28,10 +28,10 @@ export function percentual(quantidadeMarcacoes, quantidadeAtividades) {
 export function divisoes(quantidadeMarcacoes, quantidadeAtividades, divisoes) {
   const pc = percentual(quantidadeMarcacoes, quantidadeAtividades)
   return R.range(1, divisoes + 1)
-    .reduce(
-      (acc, divisao) =>
-      R.merge(acc, {[divisao]: calcularDivisao(pc, divisao, divisoes)}), {}
-    )
+    .reduce( (acc, divisao) => {
+        acc[divisao] = calcularDivisao(pc, divisao, divisoes)
+        return acc
+      }, {})
 }
 
 const calcularDivisao = (percentual, divisao, divisoes) =>

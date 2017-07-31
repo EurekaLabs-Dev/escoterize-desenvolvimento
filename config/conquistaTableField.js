@@ -2,10 +2,10 @@ const createConquista = field => ({table: 'conquista', field})
 const createProgressao = field => ({table: 'progressao', field})
 
 export default {
-  PROMESSA_ESCOTEIRA_LOBINHO:createConquista('dt_promessa_lobinho'),
-  PROMESSA_ESCOTEIRA_ESCOTEIRO:createConquista('dt_promessa_escoteira'),
-  PROMESSA_ESCOTEIRA_SENIOR:createConquista('dt_promessa_escoteira'),
-  PROMESSA_ESCOTEIRA_PIONEIRO:createConquista('dt_promessa_escoteira'),
+  PROMESSA_ESCOTEIRA_LOBINHO: createConquista('dt_promessa_lobinho'),
+  PROMESSA_ESCOTEIRA_ESCOTEIRO :createConquista('dt_promessa_escoteira'),
+  PROMESSA_ESCOTEIRA_SENIOR: createConquista('dt_promessa_escoteira'),
+  PROMESSA_ESCOTEIRA_PIONEIRO: createConquista('dt_promessa_escoteira'),
   ESCALADA: createProgressao('dt_escalada'),
   CONQUISTA: createProgressao('dt_conquista'),
   AZIMUTE: createProgressao('dt_azimute'),

@@ -52,10 +52,10 @@ const pesos = {
 }
 
 const percentuaisEspecialidadesEspecificas = (requisito, desenvolvimento) => {
-  const desenvolvimentoEspecifico = requisito.especialidades.reduce((acc, id) =>
-    R.merge(acc, {[id]: desenvolvimento[id] || 0})
-    , {}
-  )
+  const desenvolvimentoEspecifico = requisito.especialidades.reduce((acc, id) => {
+    acc[id] = desenvolvimento[id] || 0
+    return acc
+  }, {})
   const pc =  percentualEspecialidades({
     nivelMinimo: requisito.nivelMinimo,
     quantidadeMinima: requisito.quantidadeMinima
