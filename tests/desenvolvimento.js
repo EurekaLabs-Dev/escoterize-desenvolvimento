@@ -121,3 +121,17 @@ test('Calcula desenvolvimento com especialidades', t => {
   })
 })
 
+test('Calcula desenvolvimento com base nos enums com state inicial vazio', t => {
+  const marcacoes = R.flatten([
+    createMarcacoes('MARKED', 4).map(R.merge(R.__, {segmento: 'PROMESSA_ESCOTEIRA_SENIOR'})),
+    createMarcacoes('MARKED', 8).map(R.merge(R.__, {segmento: 'PROMESSA_ESCOTEIRA_LOBINHO'})),
+    createMarcacoes('MARKED', 7).map(R.merge(R.__, {segmento: 'PROGRESSAO_SENIOR'}))
+  ])
+  const result = desenvolvimento({}, marcacoes)
+  t.deepEqual(result, {
+    PROMESSA_ESCOTEIRA_LOBINHO: 8,
+    PROMESSA_ESCOTEIRA_SENIOR: 4,
+    PROGRESSAO_SENIOR: 7
+  })
+})
+

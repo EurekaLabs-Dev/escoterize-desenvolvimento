@@ -11,7 +11,7 @@ const {MARKED, UNMARKED} = MarkStatus;
 const reduceQuantidade = (qtd, marcacao) =>
   MarkStatus.isMarked(marcacao) ? qtd + 1: qtd - 1
 
-export const quantidadeMarcadas = (quantidadeAtual, marcacoes) =>
+export const quantidadeMarcadas = (quantidadeAtual = 0, marcacoes) =>
   R.compose(
     limiteZero,
     R.reduce(reduceQuantidade, quantidadeAtual)
