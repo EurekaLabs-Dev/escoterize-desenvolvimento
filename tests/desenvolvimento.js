@@ -38,7 +38,7 @@ test('Calcula desenvolvimento com base nos enums', t => {
     createMarcacoes('MARKED', 8).map(R.merge(R.__, {segmento: 'PROMESSA_ESCOTEIRA_LOBINHO'})),
     createMarcacoes('MARKED', 7).map(R.merge(R.__, {segmento: 'PROGRESSAO_SENIOR'}))
   ])
-  const result = desenvolvimento(initialState, marcacoes)
+  const result = desenvolvimento(initialState, {}, marcacoes)
   t.deepEqual(result, {
     PROMESSA_ESCOTEIRA_LOBINHO: 8,
     PROMESSA_ESCOTEIRA_SENIOR: 4,
@@ -50,11 +50,10 @@ test('Calcula desenvolvimento das especialidades', t => {
   const marcacoes = createMarcacoes('MARKED', 10)
     .map(R.merge(R.__, {
       id: 11,
-      total: 12,
       segmento: 'SERVICOS'
     }))
 
-  const result = desenvolvimentoEspecialidade({}, marcacoes)
+  const result = desenvolvimentoEspecialidade({}, {11: 12}, marcacoes)
   t.deepEqual(result, {
     11: 10,
     SERVICOS: {total: 1, n1: 0, n2: 1, n3: 0}
@@ -65,14 +64,13 @@ test('Diminui quantidade por ramo com marcação desmarcada', t => {
   const marcacoes = createMarcacoes('UNMARKED', 1)
     .map(R.merge(R.__, {
       id: 11,
-      total: 12,
       segmento: 'SERVICOS'
     }))
 
   const result = desenvolvimentoEspecialidade({
     SERVICOS: { total: 1, n1: 1, n2: 0, n3: 0 },
     11: 4
-  }, marcacoes)
+  }, {11: 12}, marcacoes)
   t.deepEqual(result, {
     11: 3,
     SERVICOS: { total: 0, n1: 0, n2: 0, n3: 0 }
@@ -107,9 +105,12 @@ test('Calcula desenvolvimento com especialidades', t => {
   }
 
   const marcacoes = createMarcacoes('MARKED', 4)
-    .map(R.merge(R.__, {segmento: 'CULTURA', id: 23, type: 'MARKED', total: 9}))
-   
-  const result = desenvolvimento(initialState, marcacoes)
+    .map(R.merge(R.__, {segmento: 'CULTURA', id: 23, type: 'MARKED'}))
+  const quantidades = {
+    23: 9
+  }
+
+  const result = desenvolvimento(initialState, quantidades, marcacoes)
   t.deepEqual(result, {
     PROMESSA_ESCOTEIRA_LOBINHO: 8,
     PROMESSA_ESCOTEIRA_SENIOR: 7,
@@ -127,11 +128,35 @@ test('Calcula desenvolvimento com base nos enums com state inicial vazio', t => 
     createMarcacoes('MARKED', 8).map(R.merge(R.__, {segmento: 'PROMESSA_ESCOTEIRA_LOBINHO'})),
     createMarcacoes('MARKED', 7).map(R.merge(R.__, {segmento: 'PROGRESSAO_SENIOR'}))
   ])
-  const result = desenvolvimento({}, marcacoes)
+  const result = desenvolvimento({}, {}, marcacoes)
   t.deepEqual(result, {
     PROMESSA_ESCOTEIRA_LOBINHO: 8,
     PROMESSA_ESCOTEIRA_SENIOR: 4,
     PROGRESSAO_SENIOR: 7
   })
 })
+
+test('Calcula desenvolvimento com especialidades e estado inicial sem especialidade', t => {
+  const initialState = {
+    PROMESSA_ESCOTEIRA_LOBINHO: 8,
+    PROMESSA_ESCOTEIRA_SENIOR: 7,
+    PROGRESSAO_SENIOR: 4,
+  }
+
+  const marcacoes = createMarcacoes('MARKED', 4)
+    .map(R.merge(R.__, {segmento: 'CULTURA', id: 23, type: 'MARKED'}))
+  const quantidadesEspecialidades = {23: 9}
+
+  const result = desenvolvimento(initialState, quantidadesEspecialidades, marcacoes)
+  t.deepEqual(result, {
+    PROMESSA_ESCOTEIRA_LOBINHO: 8,
+    PROMESSA_ESCOTEIRA_SENIOR: 7,
+    PROGRESSAO_SENIOR: 4,
+    especialidade: {
+      23: 4,
+      CULTURA: { total: 1, n1: 1, n2: 0, n3: 0 }
+    }
+  })
+})
+
 

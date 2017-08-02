@@ -5,7 +5,7 @@ import { limites1, roundTo2 } from './utils'
 export const percentualRequisitoEspecialidade = (percentual, nivelRequirido) =>
   limites1(nivelEspecialidadeFromPC(percentual) / nivelRequirido)
 
-export const percentualEspecialidades = (requisito, desenvolvimento) =>
+export const percentualEspecialidades = (requisito, desenvolvimento = {}) =>
   R.compose(
     roundTo2,
     limites1,
@@ -23,7 +23,7 @@ const getQuantidadesAcimaNivelMinimo = (requisito, desenvolvimento) => R.pipe(
   .map(nivel => values['n'+nivel] || 0),
 )
 
-export const percentualRamos = (requisito, desenvolvimento)  =>
+export const percentualRamos = (requisito, desenvolvimento = {})  =>
   R.compose(
     limites1,
     roundTo2,
@@ -34,7 +34,7 @@ export const percentualRamos = (requisito, desenvolvimento)  =>
     R.keys
   )(desenvolvimento)
 
-export const calcularPercentualDistribuicao = (desenvolvimento, quantidadeRamos) =>
+export const calcularPercentualDistribuicao = (desenvolvimento = {}, quantidadeRamos) =>
   R.compose(
     limites1,
     roundTo2,
@@ -51,7 +51,7 @@ const pesos = {
   ramosRequeridos: 1/2
 }
 
-const percentuaisEspecialidadesEspecificas = (requisito, desenvolvimento) => {
+const percentuaisEspecialidadesEspecificas = (requisito, desenvolvimento = {}) => {
   const desenvolvimentoEspecifico = requisito.especialidades.reduce((acc, id) => {
     acc[id] = desenvolvimento[id] || 0
     return acc
@@ -63,8 +63,10 @@ const percentuaisEspecialidadesEspecificas = (requisito, desenvolvimento) => {
   return limites1(pc)
 }
 
-const percentualServicos = ({nivelMinimo}, {SERVICOS: {n2 = 0, n3 = 0}}) =>
-  nivelMinimo === 3 ?  limites1(n3/ 3) : limites1((n2 + n3)/ 3)
+const percentualServicos = ({nivelMinimo}, desenvolvimento = {}) => {
+  const {n2 = 0, n3 = 0} = desenvolvimento.SERVICOS || {}
+  return nivelMinimo === 3 ?  limites1(n3/ 3) : limites1((n2 + n3)/ 3)
+}
 
 export const percentualCordao = (requisito, desenvolvimento) => {
   const {validaServicos} = requisito

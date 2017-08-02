@@ -50,11 +50,11 @@ export const byMetadata = m => m.metadata
 export const byEspecialidadeId = m => m.especialidadeId
 export const byRamoConhecimento = m => m.metadata.ramoConhecimento
 
-const countBySegmento = marcacoesSegmento => (state, segmento) => {
+const countBySegmento = (marcacoesSegmento, quantidadesEspecialidades) => (state, segmento) => {
   if (segmentoCategoria(segmento) === CATEGORIA.ESPECIALIDADE) {
     return R.over(
       R.lensProp('especialidade'),
-      state => desenvolvimentoEspecialidade(state, marcacoesSegmento[segmento]),
+      state => desenvolvimentoEspecialidade(state, quantidadesEspecialidades, marcacoesSegmento[segmento]),
       state
     )
   }
@@ -63,16 +63,17 @@ const countBySegmento = marcacoesSegmento => (state, segmento) => {
   return R.set(segmentoLens, quantidadeMarcadas(getBySegmento(state), getBySegmento(marcacoesSegmento)), state)
 }
 
-export function desenvolvimento(state, marcacoes) {
+export function desenvolvimento(state, quantidadesEspecialidades, marcacoes) {
   const marcacoesSegmento = R.groupBy(m => m.segmento, marcacoes)
 
   return R.keys(DESENVOLVIMENTO)
     .filter(segmento => !!marcacoesSegmento[segmento])
-    .reduce(countBySegmento(marcacoesSegmento), state)
+    .reduce(countBySegmento(marcacoesSegmento, quantidadesEspecialidades), state)
 }
 
-export function desenvolvimentoEspecialidade(state, marcacoes) {
-  return marcacoes.reduce((acc, {segmento, type, id, total}) => {
+export function desenvolvimentoEspecialidade(state, quantidadesEspecialidades, marcacoes) {
+  return marcacoes.reduce((acc, {segmento, type, id}) => {
+    const total = quantidadesEspecialidades[id]
     const qtdAtualRamo = R.pathOr(0, [segmento, 'total'], acc)
     const ganhoEspecialidade = type === MARKED ? 1 : -1
     const qtdEspecialidadeAtual = (acc[id] || 0) + ganhoEspecialidade

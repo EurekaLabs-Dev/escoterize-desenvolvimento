@@ -250,3 +250,22 @@ test('Não pode chegar a 100% sem 3 esps. no serviço', t=> {
 })
 
 
+test('Não pode chegar dar erro ser não tiver SERIVOS no desenvolvimento', t=> {
+  const requisito = {
+    quantidadeMinima: 15,
+    nivelMinimo: 3,
+    especialidades: [10],
+    validaServicos: true
+  }
+  const desenvolvimento = {
+    CULTURA: { n2: 2, total: 2 },
+    HABILIDADES_ESCOTEIRAS: { n1: 4, n2: 2, total: 2 },
+    DESPORTOS: { n3: 2, total: 2 },
+    CIENCIA_TECNOLOGIA: { n3: 2, total: 2 },
+    10: 1
+  }
+  const result = percentualCordao(requisito, desenvolvimento)
+  t.truthy(result)
+})
+
+

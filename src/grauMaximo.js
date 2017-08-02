@@ -46,7 +46,7 @@ export const insigniaEspecialEscoteiro = desenvolvimento =>
 
 export const calcularSenior = (desenvolvimento, pcModalidade) => {
   const values = [
-    desenvolvimento.PROGRESSAO_SENIOR,
+    desenvolvimento.PROGRESSAO_SENIOR || 0,
     insigniaEspecialSenior(desenvolvimento),
     percentualCordao(requisitos.dourado, desenvolvimento.especialidade),
     pcModalidade
@@ -64,8 +64,8 @@ export const calcularSenior = (desenvolvimento, pcModalidade) => {
 export const calcularLobinho = desenvolvimento => {
   const requisitoEspecialidades = {nivelMinimo: 1, quantidadeMinima: 5}
   const values = [
-    desenvolvimento.PROGRESSAO_PATATENRA_SALTADOR,
-    desenvolvimento.PROGRESSAO_RASTREADOR_CACADOR,
+    desenvolvimento.PROGRESSAO_PATATENRA_SALTADOR || 0,
+    desenvolvimento.PROGRESSAO_RASTREADOR_CACADOR || 0,
     insigniaEspecialLobinho(desenvolvimento),
     percentualRamos(requisitoEspecialidades, desenvolvimento.especialidade),
     calcularPercentualDistribuicao(desenvolvimento.especialidade, 3)
@@ -85,8 +85,8 @@ export const calcularLobinho = desenvolvimento => {
 export const calcularEscoteiro = (desenvolvimento, pcModalidade) => {
   const requisitoEspecialidades = {nivelMinimo: 1, quantidadeMinima: 5}
   const values = [
-    desenvolvimento.PROGRESSAO_PISTA_TRILHA,
-    desenvolvimento.PROGRESSAO_RUMO_TRAVESSIA,
+    desenvolvimento.PROGRESSAO_PISTA_TRILHA || 0,
+    desenvolvimento.PROGRESSAO_RUMO_TRAVESSIA || 0,
     insigniaEspecialEscoteiro(desenvolvimento),
     percentualCordao(requisitos.vermelhoBranco, desenvolvimento.especialidade),
     pcModalidade
