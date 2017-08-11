@@ -34,7 +34,7 @@ export function divisoes(quantidadeMarcacoes, quantidadeAtividades, divisoes) {
       }, {})
 }
 
-const calcularDivisao = (percentual, divisao, divisoes) =>
+export const calcularDivisao = (percentual, divisao, divisoes) =>
   limites(percentual * divisoes - ((divisao - 1) * 100))
 
 export const countBy  = (byValue, state, list) =>
