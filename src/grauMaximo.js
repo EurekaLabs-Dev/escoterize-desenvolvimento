@@ -46,8 +46,8 @@ export const insigniaEspecialEscoteiro = desenvolvimento =>
 
 export const calcularSenior = (desenvolvimento, pcModalidade) => {
   const values = [
-    desenvolvimento.PROGRESSAO_SENIOR || 0,
-    insigniaEspecialSenior(desenvolvimento),
+    desenvolvimento.segmento.PROGRESSAO_SENIOR || 0,
+    insigniaEspecialSenior(desenvolvimento.segmento),
     percentualCordao(requisitos.dourado, desenvolvimento.especialidade),
     pcModalidade
   ]
@@ -64,19 +64,19 @@ export const calcularSenior = (desenvolvimento, pcModalidade) => {
 export const calcularLobinho = desenvolvimento => {
   const requisitoEspecialidades = {nivelMinimo: 1, quantidadeMinima: 5}
   const values = [
-    desenvolvimento.PROGRESSAO_PATATENRA_SALTADOR || 0,
-    desenvolvimento.PROGRESSAO_RASTREADOR_CACADOR || 0,
-    insigniaEspecialLobinho(desenvolvimento),
+    desenvolvimento.segmento.PROGRESSAO_PATATENRA_SALTADOR || 0,
+    desenvolvimento.segmento.PROGRESSAO_RASTREADOR_CACADOR || 0,
+    insigniaEspecialLobinho(desenvolvimento.segmento),
     percentualRamos(requisitoEspecialidades, desenvolvimento.especialidade),
     calcularPercentualDistribuicao(desenvolvimento.especialidade, 3)
   ]
 
   const pesos =  [
-    1/4,
-    1/4,
+    0.7/4,
+    0.7/4,
     1/4/2,
     1/4/2,
-    1/4
+    0.6/4
   ]
 
   return calcularComPesos(values, pesos)
@@ -85,16 +85,17 @@ export const calcularLobinho = desenvolvimento => {
 export const calcularEscoteiro = (desenvolvimento, pcModalidade) => {
   const requisitoEspecialidades = {nivelMinimo: 1, quantidadeMinima: 5}
   const values = [
-    desenvolvimento.PROGRESSAO_PISTA_TRILHA || 0,
-    desenvolvimento.PROGRESSAO_RUMO_TRAVESSIA || 0,
-    insigniaEspecialEscoteiro(desenvolvimento),
+    desenvolvimento.segmento.PROGRESSAO_PISTA_TRILHA || 0,
+    desenvolvimento.segmento.PROGRESSAO_RUMO_TRAVESSIA || 0,
+    insigniaEspecialEscoteiro(desenvolvimento.segmento),
     percentualCordao(requisitos.vermelhoBranco, desenvolvimento.especialidade),
     pcModalidade
   ]
 
   const pesos =  [
-    1.5/4,
-    0.5/4,
+    0.8/4,
+    0.8/4,
+    0.4/4,
     1 / 4,
     1 / 4
   ]
