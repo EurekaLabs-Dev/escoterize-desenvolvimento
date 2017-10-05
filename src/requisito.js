@@ -65,7 +65,7 @@ const percentuaisEspecialidadesEspecificas = (requisito, desenvolvimento = {}) =
 
 const percentualServicos = ({nivelMinimo}, desenvolvimento = {}) => {
   const {n2 = 0, n3 = 0} = desenvolvimento.SERVICOS || {}
-  return nivelMinimo === 3 ?  limites1(n3/ 3) : limites1((n2 + n3)/ 3)
+  return nivelMinimo === 3 ?  limites1(n3/ 4) : limites1((n2 + n3)/ 4)
 }
 
 export const percentualCordao = (requisito, desenvolvimento) => {
@@ -82,8 +82,8 @@ export const percentualCordao = (requisito, desenvolvimento) => {
   let totalPesos = requisito.quantidadeMinima
   if (validaServicos) {
     percentuais.push(percentualServicos(requisito, desenvolvimento))
-    pesos.push(3)
-    totalPesos += 3
+    pesos.push(4)
+    totalPesos += 4
   }
   if (requisito.especialidades) {
     percentuais.push(percentuaisEspecialidadesEspecificas(R.merge(requisito, {quantidadeMinima: 1}), desenvolvimento))
