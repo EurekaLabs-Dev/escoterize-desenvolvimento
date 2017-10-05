@@ -72,8 +72,8 @@ export const calcularLobinho = desenvolvimento => {
   ]
 
   const pesos =  [
-    0.7/4,
-    0.7/4,
+    0.7,
+    0.7,
     1/4/2,
     1/4/2,
     0.6/4
