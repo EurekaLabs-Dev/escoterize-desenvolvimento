@@ -82,8 +82,8 @@ export const percentualCordao = (requisito, desenvolvimento) => {
   let totalPesos = requisito.quantidadeMinima
   if (validaServicos) {
     percentuais.push(percentualServicos(requisito, desenvolvimento))
-    pesos.push(4)
-    totalPesos += 4
+    pesos.push(3)
+    totalPesos += 3
   }
   if (requisito.especialidades) {
     percentuais.push(percentuaisEspecialidadesEspecificas(R.merge(requisito, {quantidadeMinima: 1}), desenvolvimento))
