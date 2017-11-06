@@ -14,5 +14,11 @@ export default key => {
     return CATEGORIAS.INSIGNIA_ESPECIAL
   }
 
-  return CATEGORIAS.ESPECIALIDADE
+  if (key.includes('SERVICO') || key.includes('CULTURA')
+    || key.includes('CIENCIA_') || key.includes('HABILIDADES_')
+    || key.includes('DESPORTO')) {
+    return CATEGORIAS.ESPECIALIDADE
+  }
+
+  return ''
 }
